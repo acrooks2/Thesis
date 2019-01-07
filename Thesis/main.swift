@@ -95,6 +95,15 @@ class OrderBook {
         orderHistory[orderIndex] = order
     }
     
+    func addOrderToLookUp(order: Order) {
+        if lookUp.keys.contains(order.traderID) {
+            lookUp[order.traderID]![order.orderID]! = order
+        }
+        else {
+            lookUp[order.traderID]! = [order.orderID:order]
+        }
+    }
+    
     func addOrderToBook(order: Order) {
         exIndex += 1
         // Add an order to the buy side
@@ -192,7 +201,7 @@ class OrderBook {
 
 var bb = BidBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
 var ab = AskBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
-var tb = TradeBook()
+var tb = TradeBook(trades: [:])
 var ob = OrderBook(bidbook: bb, askbook: ab, tradebook: tb)
 
 print(ob.askBook)
