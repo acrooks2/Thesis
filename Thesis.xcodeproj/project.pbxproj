@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CB01348521E18E8300A7D41B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348421E18E8300A7D41B /* main.swift */; };
+		CB01348521E18E8300A7D41B /* OrderBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348421E18E8300A7D41B /* OrderBook.swift */; };
 		CB01348E21E1C68400A7D41B /* SortedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348D21E1C68400A7D41B /* SortedArray.swift */; };
+		CBE76E1421E5007000D9881A /* Trader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE76E1321E5007000D9881A /* Trader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,8 +26,9 @@
 
 /* Begin PBXFileReference section */
 		CB01348121E18E8300A7D41B /* Thesis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Thesis; sourceTree = BUILT_PRODUCTS_DIR; };
-		CB01348421E18E8300A7D41B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		CB01348421E18E8300A7D41B /* OrderBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderBook.swift; sourceTree = "<group>"; };
 		CB01348D21E1C68400A7D41B /* SortedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortedArray.swift; sourceTree = "<group>"; };
+		CBE76E1321E5007000D9881A /* Trader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +62,8 @@
 			isa = PBXGroup;
 			children = (
 				CB01348D21E1C68400A7D41B /* SortedArray.swift */,
-				CB01348421E18E8300A7D41B /* main.swift */,
+				CB01348421E18E8300A7D41B /* OrderBook.swift */,
+				CBE76E1321E5007000D9881A /* Trader.swift */,
 			);
 			path = Thesis;
 			sourceTree = "<group>";
@@ -123,7 +126,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CB01348E21E1C68400A7D41B /* SortedArray.swift in Sources */,
-				CB01348521E18E8300A7D41B /* main.swift in Sources */,
+				CBE76E1421E5007000D9881A /* Trader.swift in Sources */,
+				CB01348521E18E8300A7D41B /* OrderBook.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
