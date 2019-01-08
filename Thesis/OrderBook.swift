@@ -37,7 +37,7 @@ struct Trade {
 struct BidBook {
     //always sorted array of bid prices
     var prices: SortedArray<Int>
-    //orders is a dictionary with exIDs as keys and the associated order as values
+    //orders is a dictionary with exIDs as keys and the associated order (as dicitonary) as values
     var orders: [Int:Order]
     //the number of orders at each price
     var numOrders: [Int:Int]
@@ -51,7 +51,7 @@ struct BidBook {
 struct AskBook {
     //always sorted array of ask prices
     var prices: SortedArray<Int>
-    //orders is a dictionary with exIDs as keys and the associated order as values
+    //orders is a dictionary with exIDs as keys and the associated order (as dictionary) as values
     var orders: [Int:Order]
     //the number of orders at each price
     var numOrders: [Int:Int]
@@ -78,6 +78,7 @@ class OrderBook {
     var tradeBook: TradeBook
     var tradeIndex: Int
     var lookUp: [Int:[Int:Order]]
+    var sipCollector: [[String:Int]]
     
     init(bidbook: BidBook, askbook: AskBook, tradebook: TradeBook) {
         self.orderHistory = [:]
@@ -93,6 +94,7 @@ class OrderBook {
         self.tradeBook = tradebook
         self.tradeIndex = 0
         self.lookUp = [:]
+        self.sipCollector = []
     }
     
     func addOrderToHistory(order: Order) {
@@ -331,6 +333,16 @@ class OrderBook {
             }
         }
     }
+    
+    func reportTopOfBook(nowTime: Int) -> [String:Int?] {
+        let bestBidPrice = bidBook.prices.last
+        let bestBidSize = bidBook.priceSize[bestBidPrice!]
+        let bestAskPrice = askBook.prices[0]
+        let bestAskSize = askBook.priceSize[bestAskPrice]
+        let tob = ["timeStamp":nowTime, "bestBid":bestBidPrice, "bestAsk":bestAskPrice, "bidSize":bestBidSize, "askSize":bestAskSize]
+        sipCollector.append(tob as! [String : Int])
+        return tob
+    }
 }
 
 var bb = BidBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
@@ -354,6 +366,7 @@ var newOrder4 = Order(orderID: 1, ID: 0, traderID: 1003, timeStamp: 3, type: 1, 
 var removeOrder1 = Order(orderID: 0, ID: 1, traderID: 9999, timeStamp: 4, type: 2, quantity: 100, side: 1, price: 500)
 var removeOrder2 = Order(orderID: 3, ID: 4, traderID: 9999, timeStamp: 5, type: 2, quantity: 100, side: 2, price: 505)
 var modifyOrder1 = Order(orderID: 2, ID: 3, traderID: 9999, timeStamp: 6, type: 3, quantity: 20, side: 1, price: 500)
+/*
 ob.addOrderToBook(order: initialOrder1)
 ob.addOrderToBook(order: initialOrder2)
 ob.addOrderToBook(order: initialOrder3)
@@ -369,3 +382,4 @@ ob.processOrder(order: removeOrder2)
 ob.processOrder(order: modifyOrder1)
 
 print(ob.askBook)
+*/
