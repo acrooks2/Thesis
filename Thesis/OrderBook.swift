@@ -9,19 +9,6 @@
 import Foundation
 
 
-struct Order {
-    // the order id identifies the order in sequence unique to a particular trader
-    var orderID: Int
-    // ID is to identify the order throughout the process order function
-    var ID: Int
-    var traderID: Int
-    var timeStamp: Int
-    var type: Int
-    var quantity: Int
-    var side: Int
-    var price: Int
-}
-
 struct Trade {
     var restingTraderID: Int
     var restingOrderID: Int

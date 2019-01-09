@@ -8,11 +8,17 @@
 
 import Foundation
 
-var bb = BidBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
-var ab = AskBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
-var tb = TradeBook(trades: [:])
-var ob = OrderBook(bidbook: bb, askbook: ab, tradebook: tb)
 
+var bb1 = BidBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
+var ab1 = AskBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
+var tb1 = TradeBook(trades: [:])
+var bb2 = BidBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
+var ab2 = AskBook(prices: SortedArray<Int>(), orders: [:], numOrders: [:], priceSize: [:], orderIDs: [:])
+var tb2 = TradeBook(trades: [:])
+var ob1 = OrderBook(bidbook: bb1, askbook: ab1, tradebook: tb1)
+var ob2 = OrderBook(bidbook: bb2, askbook: ab2, tradebook: tb2)
+
+/*
 let initialOrder1 = ["orderID": 0, "ID": 0, "traderID": 9999, "timeStamp": 1, "type": 1, "quantity": 100, "side": 1, "price": 500]
 let initialOrder2 = ["orderID": 1, "ID": 0, "traderID": 9999, "timeStamp": 1, "type": 1, "quantity": 100, "side": 1, "price": 499]
 let initialOrder3 = ["orderID": 2, "ID": 0, "traderID": 9999, "timeStamp": 1, "type": 1, "quantity": 200, "side": 1, "price": 500]
@@ -43,3 +49,9 @@ ob.processOrder(order: modifyOrder1)
 
 print(ob.askBook)
 print(ob.bidBook)
+*/
+
+
+var market1 = Runner(exchange1: ob1, exchange2: ob2, runSteps: 500, numMMs: 40, numMTs: 25, setupTime: 20)
+market1.setup()
+market1.run(prime: market1.setupTime, writeInterval: 5000)

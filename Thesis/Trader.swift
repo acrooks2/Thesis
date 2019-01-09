@@ -26,8 +26,10 @@ class Trader {
     var orderID: Int
     var maxQuantity: Int
     var buySellProb: Float
+    var timeDelta: Int
+    var lambda: Double
     
-    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double) {
         self.traderID = trader
         self.traderType = traderType
         self.localBook = [:]
@@ -44,6 +46,20 @@ class Trader {
         self.cancelProb = cancelProb
         self.maxQuantity = maxQuantity
         self.buySellProb = buySellProb
+        self.lambda = lambda
+        self.timeDelta = 0
+    }
+    
+    func makeTimeDelta(lambda: Double) {
+        let rExp = randExp(rate: lambda) + 1.0
+        let i = floor(rExp)
+        let iq = i * Double(self.maxQuantity)
+        let tDelta = Int(iq)
+        timeDelta = tDelta
+    }
+    
+    func randExp(rate: Double) -> Double {
+        return -1.0 / rate * log(Double.random(in: 0...1))
     }
     
     func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
@@ -113,7 +129,7 @@ class Trader {
         else {
             let minAskPrice = topOfBook["bestAsk"]!
             let maxAskPrice = minAskPrice! + quoteRange
-            for _ in 1 ... numQuotes {
+            for _ in 1 ... Int.random(in: 1...numQuotes) {
                 prices.append(Int.random(in: minAskPrice!...maxAskPrice))
             }
             side = 2

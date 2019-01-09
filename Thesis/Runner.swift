@@ -41,7 +41,9 @@ class Runner {
         let maxProviderID = 1000 + numMMs - 1
         var mmList: [Trader] = []
         for i in 1000...maxProviderID {
-            mmList.append(Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5))
+            let trader = Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            trader.makeTimeDelta(lambda: trader.lambda)
+            mmList.append(trader)
         }
         for mm in mmList {
             liquidityProviders[mm.traderID] = mm
@@ -53,7 +55,9 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            mtList.append(Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5))
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.001)
+            trader.makeTimeDelta(lambda: trader.lambda)
+            mtList.append(trader)
         }
         for mt in mtList {
             liquidityTakers[mt.traderID] = mt
@@ -73,7 +77,8 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = Trader(trader: 9999, traderType: 1, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5)
+        let seedProvider = Trader(trader: 9999, traderType: 1, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+        seedProvider.makeTimeDelta(lambda: seedProvider.lambda)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
         let bestBid = Int.random(in: 997995...999995)
@@ -89,6 +94,7 @@ class Runner {
     
     func setup() {
         traders = makeAll()
+        seedOrderBook()
         topOfBook = exchange1.reportTopOfBook(nowTime: 1)
         for time in 1...setupTime {
             providers.shuffle()
@@ -121,9 +127,33 @@ class Runner {
             traders.shuffle()
             for t in traders {
                 if t.traderType == 1 {
-                    
+                    let mod = currentTime % t.timeDelta
+                    if mod == 0 {
+                        let order = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
+                        exchange1.processOrder(order: order as! [String : Int])
+                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                    }
+                    t.bulkCancel(timeStamp: currentTime)
+                    if t.cancelCollector.count > 0 {
+                        doCancels(trader: t)
+                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                    }
+                }
+                if t.traderType == 2 {
+                    let mod = currentTime % t.timeDelta
+                    if mod == 0 {
+                        let order = t.mtProcessSignal(timeStamp: currentTime)
+                        exchange1.processOrder(order: order)
+                        if exchange1.traded {
+                            confirmTrades()
+                            topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                        }
+                    }
                 }
             }
         }
+        print("This might have worked.")
     }
+    
+    
 }
