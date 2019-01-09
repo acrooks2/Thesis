@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CB01348521E18E8300A7D41B /* OrderBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348421E18E8300A7D41B /* OrderBook.swift */; };
 		CB01348E21E1C68400A7D41B /* SortedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348D21E1C68400A7D41B /* SortedArray.swift */; };
+		CB98E06121E58062000B6EEE /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB98E06021E58062000B6EEE /* main.swift */; };
 		CBE76E1421E5007000D9881A /* Trader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE76E1321E5007000D9881A /* Trader.swift */; };
 		CBE76E1621E53FF600D9881A /* Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE76E1521E53FF600D9881A /* Runner.swift */; };
 /* End PBXBuildFile section */
@@ -29,6 +30,7 @@
 		CB01348121E18E8300A7D41B /* Thesis */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Thesis; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB01348421E18E8300A7D41B /* OrderBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderBook.swift; sourceTree = "<group>"; };
 		CB01348D21E1C68400A7D41B /* SortedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortedArray.swift; sourceTree = "<group>"; };
+		CB98E06021E58062000B6EEE /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		CBE76E1321E5007000D9881A /* Trader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trader.swift; sourceTree = "<group>"; };
 		CBE76E1521E53FF600D9881A /* Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,6 +67,7 @@
 			children = (
 				CB01348D21E1C68400A7D41B /* SortedArray.swift */,
 				CB01348421E18E8300A7D41B /* OrderBook.swift */,
+				CB98E06021E58062000B6EEE /* main.swift */,
 				CBE76E1321E5007000D9881A /* Trader.swift */,
 				CBE76E1521E53FF600D9881A /* Runner.swift */,
 			);
@@ -130,6 +133,7 @@
 			files = (
 				CB01348E21E1C68400A7D41B /* SortedArray.swift in Sources */,
 				CBE76E1621E53FF600D9881A /* Runner.swift in Sources */,
+				CB98E06121E58062000B6EEE /* main.swift in Sources */,
 				CBE76E1421E5007000D9881A /* Trader.swift in Sources */,
 				CB01348521E18E8300A7D41B /* OrderBook.swift in Sources */,
 			);
