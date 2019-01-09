@@ -30,8 +30,8 @@ class Trader {
 class MarketMaker {
     let traderID: Int
     let cancelProb: Float
-    var localBook: [Int:Order]
-    var cancelCollector: [Order]
+    var localBook: [Int:[String:Int]]
+    var cancelCollector: [[String:Int]]
     var numQuotes: Int
     var quoteRange: Int
     var position: Int
@@ -39,7 +39,7 @@ class MarketMaker {
     var cashFlowTimeStamps: [Int]
     var cashFlows: [Int]
     var positions: [Int]
-    var quoteCollector: [Order]
+    var quoteCollector: [[String:Int]]
     var orderID: Int
     var maxQuantity: Int
     
@@ -60,14 +60,14 @@ class MarketMaker {
         self.maxQuantity = 50
     }
     
-    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> Order {
+    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
         orderID += 1
-        let addOrder = Order(orderID: orderID, ID: 0, traderID: traderID, timeStamp: time, type: 1, quantity: quantity, side: side, price: price)
+        let addOrder = ["orderID": orderID, "ID": 0, "traderID": traderID, "timeStamp": time, "type": 1, "quantity": quantity, "side": side, "price": price]
         return addOrder
     }
     
-    func makeCancelOrder(existingOrder: Order, time: Int) -> Order {
-        let cancelOrder = Order(orderID: existingOrder.orderID, ID: existingOrder.ID, traderID: traderID, timeStamp: time, type: 2, quantity: existingOrder.quantity, side: existingOrder.side, price: existingOrder.price)
+    func makeCancelOrder(existingOrder: [String:Int], time: Int) -> [String:Int] {
+        let cancelOrder = ["orderID": existingOrder["orderID"]!, "ID": existingOrder["ID"]!, "traderID": traderID, "timeStamp": time, "type": 2, "quantity": existingOrder["quantity"]!, "side": existingOrder["side"]!, "price": existingOrder["price"]!]
         return cancelOrder
     }
     
@@ -77,25 +77,25 @@ class MarketMaker {
         positions.append(position)
     }
     
-    func confirmTradeLocal(confirmOrder: Order) {
+    func confirmTradeLocal(confirmOrder: [String:Int]) {
         // Update cashflow and position
-        if confirmOrder.side == 1 {
-            cashFlow -= confirmOrder.price * confirmOrder.quantity
-            position += confirmOrder.quantity
+        if confirmOrder["side"] == 1 {
+            cashFlow -= confirmOrder["price"]! * confirmOrder["quantity"]!
+            position += confirmOrder["quantity"]!
         }
         else {
-            cashFlow += confirmOrder.price * confirmOrder.quantity
-            position -= confirmOrder.quantity
+            cashFlow += confirmOrder["price"]! * confirmOrder["quantity"]!
+            position -= confirmOrder["quantity"]!
         }
         // Modify/remove order from local book
-        let localOrder = localBook[confirmOrder.orderID]
-        if confirmOrder.quantity == localOrder!.quantity {
-            localBook.removeValue(forKey: localOrder!.orderID)
+        let localOrder = localBook[confirmOrder["orderID"]!]
+        if confirmOrder["quantity"]! == localOrder!["quantity"] {
+            localBook.removeValue(forKey: localOrder!["orderID"]!)
         }
         else {
-            localBook[localOrder!.orderID]!.quantity -= confirmOrder.quantity
+            localBook[localOrder!["orderID"]!]!["quantity"]! -= confirmOrder["quantity"]!
         }
-        cumulateCashFlow(timeStamp: confirmOrder.timeStamp)
+        cumulateCashFlow(timeStamp: confirmOrder["timeStamp"]!)
     }
     
     func bulkCancel(timeStamp: Int) {
@@ -106,11 +106,11 @@ class MarketMaker {
             }
         }
         for c in cancelCollector {
-            localBook.removeValue(forKey: c.orderID)
+            localBook.removeValue(forKey: c["orderID"]!)
         }
     }
     
-    func processSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb:Float) {
+    func processSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) {
         quoteCollector.removeAll()
         var prices = Array<Int>()
         var side: Int
@@ -134,7 +134,7 @@ class MarketMaker {
         }
         for price in prices {
             let order = makeAddOrder(time: timeStamp, side: side, price: price, quantity: Int.random(in: 1...maxQuantity))
-            localBook[order.orderID] = order
+            localBook[order["orderID"]!] = order
             quoteCollector.append(order)
         }
     }
@@ -153,13 +153,13 @@ class Taker {
         self.orderID = 0
     }
     
-    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> Order {
+    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
         orderID += 1
-        let addOrder = Order(orderID: orderID, ID: 0, traderID: traderID, timeStamp: time, type: 1, quantity: quantity, side: side, price: price)
+        let addOrder = ["orderID": orderID, "ID": 0, "traderID": traderID, "timeStamp": time, "type": 1, "quantity": quantity, "side": side, "price": price]
         return addOrder
     }
     
-    func processSignal(timeStamp: Int) -> Order {
+    func processSignal(timeStamp: Int) -> [String:Int] {
         if Float.random(in: 0..<1) < buySellProb {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 200000, quantity: Int.random(in: 1...maxQuantity))
             return order

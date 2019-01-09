@@ -20,3 +20,21 @@ Float.random(in: 0..<0.5)
 for _ in 0...10 {
     print(Float.random(in: 0..<0.5))
 }
+
+var list1: [Int] = []
+
+var list2: [Int] = []
+
+for _ in 1...100 {
+    list1.append(Int.random(in: 1...100))
+}
+
+list1.shuffle()
+
+for _ in 1...50 {
+    list2.append(list1[Int.random(in: 0...99)])
+}
+
+let list2Sum = list2.reduce(0, +)
+let list2Count = list2.count
+let list2Mean = list2Sum / list2Count

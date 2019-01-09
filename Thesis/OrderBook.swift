@@ -78,7 +78,7 @@ class OrderBook {
     var tradeBook: TradeBook
     var tradeIndex: Int
     var lookUp: [Int:[Int:[String:Int]]]
-    var sipCollector: [[String:Int]]
+    var sipCollector: [[String:Int?]]
     
     init(bidbook: BidBook, askbook: AskBook, tradebook: TradeBook) {
         self.orderHistory = [:]
@@ -339,8 +339,8 @@ class OrderBook {
         let bestBidSize = bidBook.priceSize[bestBidPrice!]
         let bestAskPrice = askBook.prices[0]
         let bestAskSize = askBook.priceSize[bestAskPrice]
-        let tob = ["timeStamp":nowTime, "bestBid":bestBidPrice, "bestAsk":bestAskPrice, "bidSize":bestBidSize, "askSize":bestAskSize]
-        sipCollector.append(tob as! [String : Int])
+        let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice, "bestAsk": bestAskPrice, "bidSize": bestBidSize, "askSize": bestAskSize]
+        sipCollector.append(tob)
         return tob
     }
 }
