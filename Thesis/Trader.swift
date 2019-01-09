@@ -9,8 +9,9 @@
 import Foundation
 
 
-class MarketMaker {
+class Trader {
     let traderID: Int
+    let traderType: Int
     let cancelProb: Float
     var localBook: [Int:[String:Int]]
     var cancelCollector: [[String:Int]]
@@ -24,9 +25,11 @@ class MarketMaker {
     var quoteCollector: [[String:Int]]
     var orderID: Int
     var maxQuantity: Int
+    var buySellProb: Float
     
-    init(trader: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float) {
         self.traderID = trader
+        self.traderType = traderType
         self.localBook = [:]
         self.cancelCollector = []
         self.numQuotes = numQuotes
@@ -39,7 +42,8 @@ class MarketMaker {
         self.quoteCollector = []
         self.orderID = 0
         self.cancelProb = cancelProb
-        self.maxQuantity = 50
+        self.maxQuantity = maxQuantity
+        self.buySellProb = buySellProb
     }
     
     func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
@@ -121,28 +125,8 @@ class MarketMaker {
         }
         return quoteCollector[0]
     }
-}
-
-class Taker {
-    let traderID: Int
-    let maxQuantity: Int
-    let buySellProb: Float
-    var orderID: Int
     
-    init(traderID: Int, maxQuantity: Int, buySellProb: Float) {
-        self.traderID = traderID
-        self.maxQuantity = maxQuantity
-        self.buySellProb = buySellProb
-        self.orderID = 0
-    }
-    
-    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
-        orderID += 1
-        let addOrder = ["orderID": orderID, "ID": 0, "traderID": traderID, "timeStamp": time, "type": 1, "quantity": quantity, "side": side, "price": price]
-        return addOrder
-    }
-    
-    func processSignal(timeStamp: Int) -> [String:Int] {
+    func mtProcessSignal(timeStamp: Int) -> [String:Int] {
         if Float.random(in: 0..<1) < buySellProb {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 200000, quantity: Int.random(in: 1...maxQuantity))
             return order
@@ -153,3 +137,4 @@ class Taker {
         }
     }
 }
+

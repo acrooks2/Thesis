@@ -38,3 +38,11 @@ for _ in 1...50 {
 let list2Sum = list2.reduce(0, +)
 let list2Count = list2.count
 let list2Mean = list2Sum / list2Count
+
+(3 % 3)
+
+-1.0 / 0.5 * log(0.5)
+
+-log(Double.random(in: 0..<1)) / 0.5
+
+-log(0.5) / 0.5

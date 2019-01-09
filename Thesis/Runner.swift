@@ -12,15 +12,15 @@ class Runner {
     var exchange1: OrderBook
     var exchange2: OrderBook
     let runSteps: Int
-    var liquidityProviders: [Int:MarketMaker]
-    var liquidityTakers: [Int:Taker]
+    var liquidityProviders: [Int:Trader]
+    var liquidityTakers: [Int:Trader]
     let numMMs: Int
     let numMTs: Int
     var topOfBook: [String:Int?]
     let setupTime: Int
-    var providers: [MarketMaker]
-    var takers: [Taker]
-    var traders: [Any]
+    var providers: [Trader]
+    var takers: [Trader]
+    var traders: [Trader]
     
     init(exchange1: OrderBook, exchange2: OrderBook, runSteps: Int, numMMs: Int, numMTs: Int, setupTime: Int) {
         self.exchange1 = exchange1
@@ -37,11 +37,11 @@ class Runner {
         self.traders = []
     }
     
-    func buildProviders(numMMS: Int) -> [MarketMaker] {
+    func buildProviders(numMMS: Int) -> [Trader] {
         let maxProviderID = 1000 + numMMs - 1
-        var mmList: [MarketMaker] = []
+        var mmList: [Trader] = []
         for i in 1000...maxProviderID {
-            mmList.append(MarketMaker(trader: i, numQuotes: 12, quoteRange: 60, cancelProb: 0.025))
+            mmList.append(Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5))
         }
         for mm in mmList {
             liquidityProviders[mm.traderID] = mm
@@ -49,11 +49,11 @@ class Runner {
         return mmList
     }
     
-    func buildTakers(numTakers: Int) -> [Taker] {
+    func buildTakers(numTakers: Int) -> [Trader] {
         let maxTakerID = 2000 + numMTs - 1
-        var mtList: [Taker] = []
+        var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            mtList.append(Taker(traderID: i, maxQuantity: 1, buySellProb: 0.5))
+            mtList.append(Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5))
         }
         for mt in mtList {
             liquidityTakers[mt.traderID] = mt
@@ -62,8 +62,8 @@ class Runner {
     }
     
     // Using "Any" is not ideal, see if you can figure out another way to do it
-    func makeAll() -> [Any] {
-        var traderList: [Any] = []
+    func makeAll() -> [Trader] {
+        var traderList: [Trader] = []
         providers = buildProviders(numMMS: numMMs)
         takers = buildTakers(numTakers: numMTs)
         traderList.append(contentsOf: providers)
@@ -73,7 +73,7 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = MarketMaker(trader: 9999, numQuotes: 1, quoteRange: 60, cancelProb: 0.025)
+        let seedProvider = Trader(trader: 9999, traderType: 1, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
         let bestBid = Int.random(in: 997995...999995)
@@ -102,7 +102,7 @@ class Runner {
         }
     }
     
-    func doCancels(trader: MarketMaker) {
+    func doCancels(trader: Trader) {
         for c in trader.cancelCollector {
             exchange1.processOrder(order: c)
         }
@@ -120,7 +120,9 @@ class Runner {
         for currentTime in prime...runSteps {
             traders.shuffle()
             for t in traders {
-                
+                if t.traderType == 1 {
+                    
+                }
             }
         }
     }
