@@ -94,7 +94,7 @@ class Runner {
             providers.shuffle()
             for p in providers {
                 if Float.random(in: 0..<1) < 0.5 {
-                    let order = p.processSignal(timeStamp: time, topOfBook: topOfBook, buySellProb: 0.5)
+                    let order = p.mmProcessSignal(timeStamp: time, topOfBook: topOfBook, buySellProb: 0.5)
                     exchange1.processOrder(order: order as! [String : Int])
                     topOfBook = exchange1.reportTopOfBook(nowTime: time)
                 }

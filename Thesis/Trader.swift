@@ -9,24 +9,6 @@
 import Foundation
 
 
-class Trader {
-    var quoteCollector: [Order]
-    let traderID: Int
-    var orderID: Int
-    
-    init(trader: Int) {
-        self.traderID = trader
-        self.quoteCollector = []
-        self.orderID = 0
-    }
-    
-    func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> Order {
-        orderID += 1
-        let addOrder = Order(orderID: orderID, ID: 0, traderID: traderID, timeStamp: time, type: 1, quantity: quantity, side: side, price: price)
-        return addOrder
-    }
-}
-
 class MarketMaker {
     let traderID: Int
     let cancelProb: Float
