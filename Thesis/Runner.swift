@@ -94,8 +94,33 @@ class Runner {
             providers.shuffle()
             for p in providers {
                 if Float.random(in: 0..<1) < 0.5 {
-                    let order = 1
+                    let order = p.processSignal(timeStamp: time, topOfBook: topOfBook, buySellProb: 0.5)
+                    exchange1.processOrder(order: order as! [String : Int])
+                    topOfBook = exchange1.reportTopOfBook(nowTime: time)
                 }
+            }
+        }
+    }
+    
+    func doCancels(trader: MarketMaker) {
+        for c in trader.cancelCollector {
+            exchange1.processOrder(order: c)
+        }
+    }
+    
+    func confirmTrades() {
+        for c in exchange1.confirmTradeCollector {
+            let contraSide = liquidityProviders[c["traderID"]!]
+            contraSide?.confirmTradeLocal(confirmOrder: c)
+        }
+    }
+    
+    func run(prime: Int, writeInterval: Int) {
+        topOfBook = exchange1.reportTopOfBook(nowTime: prime)
+        for currentTime in prime...runSteps {
+            traders.shuffle()
+            for t in traders {
+                
             }
         }
     }

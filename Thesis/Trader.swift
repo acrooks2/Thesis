@@ -110,13 +110,13 @@ class MarketMaker {
         }
     }
     
-    func processSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) {
+    func mmProcessSignal(timeStamp: Int, topOfBook: [String:Int?], buySellProb: Float) -> [String:Int?] {
         quoteCollector.removeAll()
         var prices = Array<Int>()
         var side: Int
         // This creates a buy order (buySellProb = .5 is equal probability of buy or sell)
         if Float.random(in: 0..<1) < buySellProb {
-            let maxBidPrice = topOfBook["bestBid"]
+            let maxBidPrice = topOfBook["bestBid"]!
             let minBidPrice = maxBidPrice! - quoteRange
             for _ in 1 ... numQuotes {
                 prices.append(Int.random(in: minBidPrice...maxBidPrice!))
@@ -125,7 +125,7 @@ class MarketMaker {
         }
         // This creates a sell order
         else {
-            let minAskPrice = topOfBook["bestAsk"]
+            let minAskPrice = topOfBook["bestAsk"]!
             let maxAskPrice = minAskPrice! + quoteRange
             for _ in 1 ... numQuotes {
                 prices.append(Int.random(in: minAskPrice!...maxAskPrice))
@@ -137,6 +137,7 @@ class MarketMaker {
             localBook[order["orderID"]!] = order
             quoteCollector.append(order)
         }
+        return quoteCollector[0]
     }
 }
 
