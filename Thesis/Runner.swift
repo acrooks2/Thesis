@@ -14,27 +14,44 @@ class Runner {
     let runSteps: Int
     var liquidityProviders: [Int:Trader]
     var liquidityTakers: [Int:Trader]
+    let numProviders: Int
     let numMMs: Int
     let numMTs: Int
     var topOfBook: [String:Int?]
     let setupTime: Int
     var providers: [Trader]
+    var marketMakers: [Trader]
     var takers: [Trader]
     var traders: [Trader]
     
-    init(exchange1: OrderBook, exchange2: OrderBook, runSteps: Int, numMMs: Int, numMTs: Int, setupTime: Int) {
+    init(exchange1: OrderBook, exchange2: OrderBook, runSteps: Int, numProviders: Int, numMMs: Int, numMTs: Int, setupTime: Int) {
         self.exchange1 = exchange1
         self.exchange2 = exchange2
         self.runSteps = runSteps
         self.liquidityProviders = [:]
         self.liquidityTakers = [:]
+        self.numProviders = numProviders
         self.numMMs = numMMs
         self.numMTs = numMTs
         self.topOfBook = [:]
         self.setupTime = setupTime
         self.providers = []
+        self.marketMakers = []
         self.takers = []
         self.traders = []
+    }
+    
+    func buildProviders(numProviders: Int) -> [Trader] {
+        let maxProviderID = 3000 + numProviders - 1
+        var providerList: [Trader] = []
+        for i in 3000...maxProviderID {
+            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            providerList.append(trader)
+        }
+        for p in providerList {
+            liquidityProviders[p.traderID] = p
+        }
+        return providerList
     }
     
     func buildMarketMakers(numMMS: Int) -> [Trader] {
@@ -68,9 +85,11 @@ class Runner {
     // Using "Any" is not ideal, see if you can figure out another way to do it
     func makeAll() -> [Trader] {
         var traderList: [Trader] = []
-        providers = buildMarketMakers(numMMS: numMMs)
+        providers = buildProviders(numProviders: numProviders)
+        marketMakers = buildMarketMakers(numMMS: numMMs)
         takers = buildTakers(numTakers: numMTs)
         traderList.append(contentsOf: providers)
+        traderList.append(contentsOf: marketMakers)
         traderList.append(contentsOf: takers)
         traderList.shuffle()
         return traderList
@@ -100,7 +119,7 @@ class Runner {
             providers.shuffle()
             for p in providers {
                 if Float.random(in: 0..<1) < 0.5 {
-                    let order = p.mmProcessSignal(timeStamp: time, topOfBook: topOfBook, buySellProb: 0.5)
+                    let order = p.providerProcessSignal(timeStamp: time, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                     exchange1.processOrder(order: order as! [String : Int])
                     topOfBook = exchange1.reportTopOfBook(nowTime: time)
                 }
