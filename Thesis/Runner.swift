@@ -46,6 +46,7 @@ class Runner {
         var providerList: [Trader] = []
         for i in 3000...maxProviderID {
             let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            trader.makeTimeDelta(lambda: trader.lambda)
             providerList.append(trader)
         }
         for p in providerList {
@@ -145,11 +146,23 @@ class Runner {
         for currentTime in prime...runSteps {
             traders.shuffle()
             for t in traders {
+                
+                if t.traderType == 0 {
+                    let mod = currentTime % t.timeDelta
+                    if mod == 0 {
+                        let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
+                        exchange1.processOrder(order: order as! [String : Int])
+                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                    }
+                }
+                
                 if t.traderType == 1 {
                     let mod = currentTime % t.timeDelta
                     if mod == 0 {
-                        let order = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
-                        exchange1.processOrder(order: order as! [String : Int])
+                        let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
+                        for order in orders {
+                            exchange1.processOrder(order: order as! [String : Int])
+                        }
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
                     }
                     t.bulkCancel(timeStamp: currentTime)

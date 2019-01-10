@@ -46,3 +46,15 @@ let list2Mean = list2Sum / list2Count
 -log(Double.random(in: 0..<1)) / 0.5
 
 -log(0.5) / 0.5
+
+for _ in 1...10 {
+    print(Int((Double.random(in: 0..<1)) * log(Double.random(in: 0..<1))))
+}
+
+func randExp(rate: Double) -> Double {
+    return -1.0 / rate * log(Double.random(in: 0...1))
+}
+
+for _ in 1...10 {
+    print(randExp(rate: 0.0375))
+}

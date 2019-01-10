@@ -115,7 +115,7 @@ class Trader {
     func providerProcessSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) -> [String:Int?] {
         var price: Int
         var side: Int
-        let lambda = Double.random(in: 0..<1)
+        let lambda = Double.random(in: 0..<100)
         var order: [String:Int]
         if Float.random(in: 0..<1) < buySellProb {
             side = 1
@@ -135,16 +135,16 @@ class Trader {
         var price: Int
         plug = Int(lambda * log(Double.random(in: 0..<1)))
         if side == 1 {
-            price = insidePrice - plug - 1
+            price = insidePrice - (-plug) - 1
             return price
         }
         else {
-            price = insidePrice + plug + 1
+            price = insidePrice + (-plug) + 1
             return price
         }
     }
     
-    func mmProcessSignal(timeStamp: Int, topOfBook: [String:Int?], buySellProb: Float) -> [String:Int?] {
+    func mmProcessSignal(timeStamp: Int, topOfBook: [String:Int?], buySellProb: Float) -> [[String:Int?]] {
         quoteCollector.removeAll()
         var prices = Array<Int>()
         var side: Int
@@ -171,7 +171,7 @@ class Trader {
             localBook[order["orderID"]!] = order
             quoteCollector.append(order)
         }
-        return quoteCollector[0]
+        return quoteCollector
     }
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
