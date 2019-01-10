@@ -37,10 +37,10 @@ class Runner {
         self.traders = []
     }
     
-    func buildProviders(numMMS: Int) -> [Trader] {
-        let maxProviderID = 1000 + numMMs - 1
+    func buildMarketMakers(numMMS: Int) -> [Trader] {
+        let maxMarketMakerID = 1000 + numMMs - 1
         var mmList: [Trader] = []
-        for i in 1000...maxProviderID {
+        for i in 1000...maxMarketMakerID {
             let trader = Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
             trader.makeTimeDelta(lambda: trader.lambda)
             mmList.append(trader)
@@ -68,7 +68,7 @@ class Runner {
     // Using "Any" is not ideal, see if you can figure out another way to do it
     func makeAll() -> [Trader] {
         var traderList: [Trader] = []
-        providers = buildProviders(numMMS: numMMs)
+        providers = buildMarketMakers(numMMS: numMMs)
         takers = buildTakers(numTakers: numMTs)
         traderList.append(contentsOf: providers)
         traderList.append(contentsOf: takers)
@@ -77,7 +77,7 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = Trader(trader: 9999, traderType: 1, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
         seedProvider.makeTimeDelta(lambda: seedProvider.lambda)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
