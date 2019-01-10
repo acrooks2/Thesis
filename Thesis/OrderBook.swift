@@ -306,7 +306,7 @@ class OrderBook {
                 }
             }
         }
-        // order is not "cancel" or "modify"
+        // order is "cancel" or "modify"
         else {
             // order is "cancel"
             if order["type"] == 2 {
