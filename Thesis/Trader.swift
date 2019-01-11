@@ -176,7 +176,7 @@ class Trader {
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
         if Float.random(in: 0..<1) < buySellProb {
-            let order = makeAddOrder(time: timeStamp, side: 1, price: 200000, quantity: Int.random(in: 1...maxQuantity))
+            let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
             return order
         }
         else {

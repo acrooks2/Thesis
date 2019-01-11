@@ -171,6 +171,7 @@ class OrderBook {
     }
     
     func addTradeToBook(trade: Trade) {
+        tradeIndex += 1
         tradeBook.trades[tradeIndex] = trade
     }
     
@@ -227,7 +228,7 @@ class OrderBook {
             while remainder! > 0 {
                 let price = askBook.prices[0]
                 if order["price"]! >= price {
-                    let bookOrderExID = askBook.orderIDs[order["price"]!]![0]
+                    let bookOrderExID = askBook.orderIDs[price]![0]
                     let bookOrder = askBook.orders[bookOrderExID]
                     if remainder! >= bookOrder!["quantity"]! {
                         confirmTrade(bookOrder: bookOrder!, order: order)
@@ -240,7 +241,7 @@ class OrderBook {
                     // Remainder less than book order
                     else {
                         var modifiedBookOrder = bookOrder!
-                        modifiedBookOrder["quantity"]! -= remainder!
+                        modifiedBookOrder["quantity"]! = remainder!
                         confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
@@ -274,7 +275,7 @@ class OrderBook {
                     // Remainder less than book order
                     else {
                         var modifiedBookOrder = bookOrder!
-                        modifiedBookOrder["quantity"]! -= remainder!
+                        modifiedBookOrder["quantity"]! = remainder!
                         confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)

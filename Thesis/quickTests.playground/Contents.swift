@@ -62,9 +62,13 @@ for _ in 1...10 {
 var x = ["key":1]
 var y = x
 y["key"]! -= 1
-print(x["key"])
-print(y["key"])
+print(x["key"]!)
+print(y["key"]!)
 
+
+var dlist: [[String:Int]] = []
+let order = ["ID": 1, "quantity": 20]
+dlist.append(order)
 
 var f = false
 
