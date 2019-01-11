@@ -31,7 +31,7 @@ struct BidBook {
     //the quantity at each price
     var priceSize: [Int:Int]
     // dictionary with prices as keys and lists of exIDs as values
-    var orderIDs: [Int:[Int]]
+    var orderIDs: [Int:SortedArray<Int>]
     
 }
 
@@ -45,7 +45,7 @@ struct AskBook {
     //the quantity at each price
     var priceSize: [Int:Int]
     // dictionary with prices as keys and lists exIDs as values
-    var orderIDs: [Int:[Int]]
+    var orderIDs: [Int:SortedArray<Int>]
 }
 
 struct TradeBook {
@@ -112,7 +112,7 @@ class OrderBook {
             if bidBook.prices.contains(order["price"]!) {
                 bidBook.numOrders[order["price"]!]! += 1
                 bidBook.priceSize[order["price"]!]! += order["quantity"]!
-                bidBook.orderIDs[order["price"]!]!.append(exIndex)
+                bidBook.orderIDs[order["price"]!]!.insert(exIndex)
                 bidBook.orders[exIndex] = order
                 bidBook.orders[exIndex]!["ID"] = exIndex
             }
@@ -121,10 +121,11 @@ class OrderBook {
                 bidBook.numOrders[order["price"]!] = 1
                 bidBook.priceSize[order["price"]!] = order["quantity"]
                 if bidBook.orderIDs[order["price"]!] == nil {
-                    bidBook.orderIDs[order["price"]!] = [exIndex]
+                    bidBook.orderIDs[order["price"]!] = SortedArray<Int>()
+                    bidBook.orderIDs[order["price"]!]?.insert(exIndex)
                 }
                 else {
-                    bidBook.orderIDs[order["price"]!]!.append(exIndex)
+                    bidBook.orderIDs[order["price"]!]!.insert(exIndex)
                 }
                 bidBook.orders[exIndex] = order
                 bidBook.orders[exIndex]!["ID"] = exIndex
@@ -135,7 +136,7 @@ class OrderBook {
             if askBook.prices.contains(order["price"]!) {
                 askBook.numOrders[order["price"]!]! += 1
                 askBook.priceSize[order["price"]!]! += order["quantity"]!
-                askBook.orderIDs[order["price"]!]!.append(exIndex)
+                askBook.orderIDs[order["price"]!]!.insert(exIndex)
                 askBook.orders[exIndex] = order
                 askBook.orders[exIndex]!["ID"] = exIndex
             }
@@ -144,10 +145,11 @@ class OrderBook {
                 askBook.numOrders[order["price"]!] = 1
                 askBook.priceSize[order["price"]!] = order["quantity"]
                 if askBook.orderIDs[order["price"]!] == nil {
-                    askBook.orderIDs[order["price"]!] = [exIndex]
+                    askBook.orderIDs[order["price"]!] = SortedArray<Int>()
+                    askBook.orderIDs[order["price"]!]?.insert(exIndex)
                 }
                 else {
-                    askBook.orderIDs[order["price"]!]!.append(exIndex)
+                    askBook.orderIDs[order["price"]!]!.insert(exIndex)
                 }
                 askBook.orders[exIndex] = order
                 askBook.orders[exIndex]!["ID"] = exIndex
@@ -176,7 +178,7 @@ class OrderBook {
         if order["side"] == 1 {
             bidBook.numOrders[order["price"]!]! -= 1
             bidBook.priceSize[order["price"]!]! -= order["quantity"]!
-            bidBook.orderIDs[order["price"]!]! = bidBook.orderIDs[order["price"]!]!.filter {$0 != order["ID"]}
+            bidBook.orderIDs[order["price"]!]!.remove(order["ID"]!)
             bidBook.orders.removeValue(forKey: order["ID"]!)
             if bidBook.numOrders[order["price"]!]! == 0 {
                 bidBook.prices.remove(order["price"]!)
@@ -185,7 +187,7 @@ class OrderBook {
         else {
             askBook.numOrders[order["price"]!]! -= 1
             askBook.priceSize[order["price"]!]! -= order["quantity"]!
-            askBook.orderIDs[order["price"]!]! = askBook.orderIDs[order["price"]!]!.filter {$0 != order["ID"]}
+            askBook.orderIDs[order["price"]!]!.remove(order["ID"]!)
             askBook.orders.removeValue(forKey: order["ID"]!)
             if askBook.numOrders[order["price"]!]! == 0 {
                 askBook.prices.remove(order["price"]!)
