@@ -73,7 +73,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.001)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -182,6 +182,10 @@ class Runner {
                         }
                     }
                 }
+            }
+            if currentTime % writeInterval == 0 {
+                exchange1.orderHistoryToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/orders.csv")
+                exchange1.sipToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/sip.csv")
             }
         }
         print("This might have worked.")

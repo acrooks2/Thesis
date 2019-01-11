@@ -31,7 +31,7 @@ struct BidBook {
     //the quantity at each price
     var priceSize: [Int:Int]
     // dictionary with prices as keys and lists of exIDs as values
-    var orderIDs: [Int:[Int]]
+    var orderIDs: [Int:SortedArray<Int>]
     
 }
 
@@ -45,7 +45,7 @@ struct AskBook {
     //the quantity at each price
     var priceSize: [Int:Int]
     // dictionary with prices as keys and lists exIDs as values
-    var orderIDs: [Int:[Int]]
+    var orderIDs: [Int:SortedArray<Int>]
 }
 
 struct TradeBook {
@@ -55,6 +55,11 @@ struct TradeBook {
 
 class OrderBook {
     var orderHistory: [Int:[String:Int]]
+    // initial string of order history data to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
+    var orderHistoryString = "exID,orderID,traderID,timeStamp,type,quantity,side,price\n"
+    let generalFileManager = FileManager()
+    // initial string of sip to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
+    var sipString = "timeStamp,bestBid,bestAsk,bidSize,askSize\n"
     var bidBook: BidBook
     var askBook: AskBook
     var orderIndex: Int
@@ -87,6 +92,8 @@ class OrderBook {
     func addOrderToHistory(order: [String:Int]) {
         orderIndex += 1
         orderHistory[orderIndex] = order
+        let newLine = "\(order["ID"]!),\(order["orderID"]!),\(order["traderID"]!),\(order["timeStamp"]!),\(order["type"]!),\(order["quantity"]!),\(order["side"]!),\(order["price"]!)\n"
+        orderHistoryString.append(contentsOf: newLine)
     }
     
     func addOrderToLookUp(order: [String:Int]) {
@@ -105,7 +112,7 @@ class OrderBook {
             if bidBook.prices.contains(order["price"]!) {
                 bidBook.numOrders[order["price"]!]! += 1
                 bidBook.priceSize[order["price"]!]! += order["quantity"]!
-                bidBook.orderIDs[order["price"]!]!.append(exIndex)
+                bidBook.orderIDs[order["price"]!]!.insert(exIndex)
                 bidBook.orders[exIndex] = order
                 bidBook.orders[exIndex]!["ID"] = exIndex
             }
@@ -114,10 +121,11 @@ class OrderBook {
                 bidBook.numOrders[order["price"]!] = 1
                 bidBook.priceSize[order["price"]!] = order["quantity"]
                 if bidBook.orderIDs[order["price"]!] == nil {
-                    bidBook.orderIDs[order["price"]!] = [exIndex]
+                    bidBook.orderIDs[order["price"]!] = SortedArray<Int>()
+                    bidBook.orderIDs[order["price"]!]?.insert(exIndex)
                 }
                 else {
-                    bidBook.orderIDs[order["price"]!]!.append(exIndex)
+                    bidBook.orderIDs[order["price"]!]!.insert(exIndex)
                 }
                 bidBook.orders[exIndex] = order
                 bidBook.orders[exIndex]!["ID"] = exIndex
@@ -128,7 +136,7 @@ class OrderBook {
             if askBook.prices.contains(order["price"]!) {
                 askBook.numOrders[order["price"]!]! += 1
                 askBook.priceSize[order["price"]!]! += order["quantity"]!
-                askBook.orderIDs[order["price"]!]!.append(exIndex)
+                askBook.orderIDs[order["price"]!]!.insert(exIndex)
                 askBook.orders[exIndex] = order
                 askBook.orders[exIndex]!["ID"] = exIndex
             }
@@ -137,10 +145,11 @@ class OrderBook {
                 askBook.numOrders[order["price"]!] = 1
                 askBook.priceSize[order["price"]!] = order["quantity"]
                 if askBook.orderIDs[order["price"]!] == nil {
-                    askBook.orderIDs[order["price"]!] = [exIndex]
+                    askBook.orderIDs[order["price"]!] = SortedArray<Int>()
+                    askBook.orderIDs[order["price"]!]?.insert(exIndex)
                 }
                 else {
-                    askBook.orderIDs[order["price"]!]!.append(exIndex)
+                    askBook.orderIDs[order["price"]!]!.insert(exIndex)
                 }
                 askBook.orders[exIndex] = order
                 askBook.orders[exIndex]!["ID"] = exIndex
@@ -154,7 +163,6 @@ class OrderBook {
             let lookupOrder = askBook.orders[exIndex]!
             addOrderToLookUp(order: lookupOrder)
         }
-        
     }
     
     func confirmTrade(bookOrder: [String:Int], order: [String:Int]) {
@@ -170,7 +178,7 @@ class OrderBook {
         if order["side"] == 1 {
             bidBook.numOrders[order["price"]!]! -= 1
             bidBook.priceSize[order["price"]!]! -= order["quantity"]!
-            bidBook.orderIDs[order["price"]!]! = bidBook.orderIDs[order["price"]!]!.filter {$0 != order["ID"]}
+            bidBook.orderIDs[order["price"]!]!.remove(order["ID"]!)
             bidBook.orders.removeValue(forKey: order["ID"]!)
             if bidBook.numOrders[order["price"]!]! == 0 {
                 bidBook.prices.remove(order["price"]!)
@@ -179,7 +187,7 @@ class OrderBook {
         else {
             askBook.numOrders[order["price"]!]! -= 1
             askBook.priceSize[order["price"]!]! -= order["quantity"]!
-            askBook.orderIDs[order["price"]!]! = askBook.orderIDs[order["price"]!]!.filter {$0 != order["ID"]}
+            askBook.orderIDs[order["price"]!]!.remove(order["ID"]!)
             askBook.orders.removeValue(forKey: order["ID"]!)
             if askBook.numOrders[order["price"]!]! == 0 {
                 askBook.prices.remove(order["price"]!)
@@ -231,7 +239,9 @@ class OrderBook {
                     }
                     // Remainder less than book order
                     else {
-                        confirmTrade(bookOrder: bookOrder!, order: order)
+                        var modifiedBookOrder = bookOrder!
+                        modifiedBookOrder["quantity"]! -= remainder!
+                        confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
                         modifyOrder(order: bookOrder!, less: remainder!)
@@ -263,7 +273,9 @@ class OrderBook {
                     }
                     // Remainder less than book order
                     else {
-                        confirmTrade(bookOrder: bookOrder!, order: order)
+                        var modifiedBookOrder = bookOrder!
+                        modifiedBookOrder["quantity"]! -= remainder!
+                        confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
                         modifyOrder(order: bookOrder!, less: remainder!)
@@ -321,6 +333,57 @@ class OrderBook {
         }
     }
     
+    func orderHistoryToCsv(filePath: String) {
+        if generalFileManager.fileExists(atPath: filePath) {
+            // create file handler
+            let fh = FileHandle(forWritingAtPath: filePath)
+            // seek to end of file
+            fh?.seekToEndOfFile()
+            // convert orderHistoryString to Data type
+            let data = orderHistoryString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            // write to end of file
+            fh?.write(data!)
+            // close the file handler
+            fh?.closeFile()
+            orderHistoryString.removeAll()
+        }
+        else {
+            do {
+                try orderHistoryString.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+                orderHistoryString.removeAll()
+            } catch {
+                print("Failed to write order history to file.")
+                print("\(error)")
+            }
+        }
+        
+    }
+    
+    func sipToCsv(filePath: String) {
+        if generalFileManager.fileExists(atPath: filePath) {
+            // create file handler
+            let fh = FileHandle(forWritingAtPath: filePath)
+            // seek to end of file
+            fh?.seekToEndOfFile()
+            // convert sip string to Data type
+            let data = sipString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            // write to end of file
+            fh?.write(data!)
+            // close the file handler
+            fh?.closeFile()
+            sipString.removeAll()
+        }
+        else {
+            do {
+                try sipString.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+                sipString.removeAll()
+            } catch {
+                print("Failed to write sip to file.")
+                print("\(error)")
+            }
+        }
+    }
+    
     func reportTopOfBook(nowTime: Int) -> [String:Int?] {
         let bestBidPrice = bidBook.prices.last
         let bestBidSize = bidBook.priceSize[bestBidPrice!]
@@ -328,6 +391,8 @@ class OrderBook {
         let bestAskSize = askBook.priceSize[bestAskPrice]
         let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice, "bestAsk": bestAskPrice, "bidSize": bestBidSize, "askSize": bestAskSize]
         sipCollector.append(tob)
+        let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)\n"
+        sipString.append(contentsOf: sipData)
         return tob
     }
 }
