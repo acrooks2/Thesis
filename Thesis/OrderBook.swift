@@ -55,6 +55,10 @@ struct TradeBook {
 
 class OrderBook {
     var orderHistory: [Int:[String:Int]]
+    // initial string of order history data to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
+    var orderHistoryString = "exID,orderID,traderID,timeStamp,type,quantity,side,price"
+    // initial string of sip to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
+    var sipString = "timeStamp,bestBid,bestAsk,bidSize,bidSize,askSize"
     var bidBook: BidBook
     var askBook: AskBook
     var orderIndex: Int
@@ -154,7 +158,6 @@ class OrderBook {
             let lookupOrder = askBook.orders[exIndex]!
             addOrderToLookUp(order: lookupOrder)
         }
-        
     }
     
     func confirmTrade(bookOrder: [String:Int], order: [String:Int]) {
@@ -231,7 +234,9 @@ class OrderBook {
                     }
                     // Remainder less than book order
                     else {
-                        confirmTrade(bookOrder: bookOrder!, order: order)
+                        var modifiedBookOrder = bookOrder!
+                        modifiedBookOrder["quantity"]! -= remainder!
+                        confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
                         modifyOrder(order: bookOrder!, less: remainder!)
@@ -263,7 +268,9 @@ class OrderBook {
                     }
                     // Remainder less than book order
                     else {
-                        confirmTrade(bookOrder: bookOrder!, order: order)
+                        var modifiedBookOrder = bookOrder!
+                        modifiedBookOrder["quantity"]! -= remainder!
+                        confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
                         modifyOrder(order: bookOrder!, less: remainder!)
@@ -321,6 +328,24 @@ class OrderBook {
         }
     }
     
+    func orderHistoryToCsv(filePath: String, data: String) {
+        do {
+            try data.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            print("Failed to write order history to file.")
+            print("\(error)")
+        }
+    }
+    
+    func sipToCsv(filePath: String, data: String) {
+        do {
+            try data.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+        } catch {
+            print("Failed to write sip to file.")
+            print("\(error)")
+        }
+    }
+    
     func reportTopOfBook(nowTime: Int) -> [String:Int?] {
         let bestBidPrice = bidBook.prices.last
         let bestBidSize = bidBook.priceSize[bestBidPrice!]
@@ -328,6 +353,8 @@ class OrderBook {
         let bestAskSize = askBook.priceSize[bestAskPrice]
         let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice, "bestAsk": bestAskPrice, "bidSize": bestBidSize, "askSize": bestAskSize]
         sipCollector.append(tob)
+        let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)"
+        sipString.append(contentsOf: sipData)
         return tob
     }
 }
