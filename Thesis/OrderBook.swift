@@ -228,7 +228,7 @@ class OrderBook {
             while remainder! > 0 {
                 let price = askBook.prices[0]
                 if order["price"]! >= price {
-                    let bookOrderExID = askBook.orderIDs[order["price"]!]![0]
+                    let bookOrderExID = askBook.orderIDs[price]![0]
                     let bookOrder = askBook.orders[bookOrderExID]
                     if remainder! >= bookOrder!["quantity"]! {
                         confirmTrade(bookOrder: bookOrder!, order: order)
