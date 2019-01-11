@@ -48,7 +48,7 @@ let list2Mean = list2Sum / list2Count
 -log(0.5) / 0.5
 
 for _ in 1...10 {
-    print(Int((Double.random(in: 0..<100)) * log(Double.random(in: 0..<1))))
+    print(Int((Double.random(in: 0..<500)) * log(Double.random(in: 0..<1))))
 }
 
 func randExp(rate: Double) -> Double {

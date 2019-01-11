@@ -115,7 +115,7 @@ class Trader {
     func providerProcessSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) -> [String:Int?] {
         var price: Int
         var side: Int
-        let lambda = Double.random(in: 0..<100)
+        let lambda = Double.random(in: 0..<500)
         var order: [String:Int]
         if Float.random(in: 0..<1) < buySellProb {
             side = 1

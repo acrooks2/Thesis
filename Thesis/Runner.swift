@@ -170,7 +170,7 @@ class Runner {
                     }
                 }
                 if t.traderType == 2 {
-                    if Float.random(in: 0..<1) < 0.01 {
+                    if Float.random(in: 0..<1) < 0.025 {
                         let order = t.mtProcessSignal(timeStamp: currentTime)
                         exchange1.processOrder(order: order)
                         if exchange1.traded {
