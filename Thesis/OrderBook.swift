@@ -171,6 +171,7 @@ class OrderBook {
     }
     
     func addTradeToBook(trade: Trade) {
+        tradeIndex += 1
         tradeBook.trades[tradeIndex] = trade
     }
     
@@ -240,7 +241,7 @@ class OrderBook {
                     // Remainder less than book order
                     else {
                         var modifiedBookOrder = bookOrder!
-                        modifiedBookOrder["quantity"]! -= remainder!
+                        modifiedBookOrder["quantity"]! = remainder!
                         confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
@@ -274,7 +275,7 @@ class OrderBook {
                     // Remainder less than book order
                     else {
                         var modifiedBookOrder = bookOrder!
-                        modifiedBookOrder["quantity"]! -= remainder!
+                        modifiedBookOrder["quantity"]! = remainder!
                         confirmTrade(bookOrder: modifiedBookOrder, order: order)
                         let trade = Trade(restingTraderID: (bookOrder?["traderID"])!, restingOrderID: (bookOrder?["orderID"])!, restingTimeStamp: (bookOrder?["timeStamp"])!, incomingTraderID: order["traderID"]!, incomingOrderID: order["orderID"]!, incomingTimeStamp: order["timeStamp"]!, tradePrice: (bookOrder?["price"])!, tradeQuantity: (bookOrder?["quantity"])!, side: order["side"]!)
                         addTradeToBook(trade: trade)
