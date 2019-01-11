@@ -73,7 +73,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.001)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -142,11 +142,7 @@ class Runner {
     }
     
     func run(prime: Int, writeInterval: Int) {
-        let tobFileName = "tob.csv"
         topOfBook = exchange1.reportTopOfBook(nowTime: prime)
-        var csvTobText = "time_stamp,best_bid,best_ask,bid_size,ask_size\n"
-        var tobNewLine = "\(topOfBook["timeStamp"]!!),\(topOfBook["bestBid"]!!),\(topOfBook["bestAsk"]!!),\(topOfBook["bidSize"]!!),\(topOfBook["askSize"]!!)\n"
-        csvTobText.append(contentsOf: tobNewLine)
         for currentTime in prime...runSteps {
             traders.shuffle()
             for t in traders {
@@ -157,8 +153,6 @@ class Runner {
                         let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                         exchange1.processOrder(order: order as! [String : Int])
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
-                        tobNewLine = "\(topOfBook["timeStamp"])),\(topOfBook["bestBid"])),\(topOfBook["bestAsk"])),\(topOfBook["bidSize"])),\(topOfBook["askSize"]))\n"
-                        csvTobText.append(contentsOf: tobNewLine)
                     }
                 }
                 
@@ -170,15 +164,11 @@ class Runner {
                             exchange1.processOrder(order: order as! [String : Int])
                         }
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
-                        tobNewLine = "\(topOfBook["timeStamp"]!!),\(topOfBook["bestBid"]!!),\(topOfBook["bestAsk"]!!),\(topOfBook["bidSize"]!!),\(topOfBook["askSize"]!!)\n"
-                        csvTobText.append(contentsOf: tobNewLine)
                     }
                     t.bulkCancel(timeStamp: currentTime)
                     if t.cancelCollector.count > 0 {
                         doCancels(trader: t)
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
-                        tobNewLine = "\(topOfBook["timeStamp"]!!),\(topOfBook["bestBid"]!!),\(topOfBook["bestAsk"]!!),\(topOfBook["bidSize"]!!),\(topOfBook["askSize"]!!)\n"
-                        csvTobText.append(contentsOf: tobNewLine)
                     }
                 }
                 if t.traderType == 2 {
@@ -189,8 +179,6 @@ class Runner {
                         if exchange1.traded {
                             confirmTrades()
                             topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
-                            tobNewLine = "\(topOfBook["timeStamp"]!!),\(topOfBook["bestBid"]!!),\(topOfBook["bestAsk"]!!),\(topOfBook["bidSize"]!!),\(topOfBook["askSize"]!!)\n"
-                            csvTobText.append(contentsOf: tobNewLine)
                         }
                     }
                 }

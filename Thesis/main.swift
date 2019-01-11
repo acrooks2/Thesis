@@ -54,4 +54,4 @@ print(ob.bidBook)
 
 var market1 = Runner(exchange1: ob1, exchange2: ob2, runSteps: 50000, numProviders: 38, numMMs: 1, numMTs: 50, setupTime: 20)
 market1.setup()
-market1.run(prime: market1.setupTime, writeInterval: 5000)
+market1.run(prime: market1.setupTime, writeInterval: 500)
