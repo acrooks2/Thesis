@@ -56,9 +56,10 @@ struct TradeBook {
 class OrderBook {
     var orderHistory: [Int:[String:Int]]
     // initial string of order history data to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
-    var orderHistoryString = "exID,orderID,traderID,timeStamp,type,quantity,side,price"
+    var orderHistoryString = "exID,orderID,traderID,timeStamp,type,quantity,side,price\n"
+    let generalFileManager = FileManager()
     // initial string of sip to be written to csv file at write intervals (this is the header row, it will be cleared after the first file write)
-    var sipString = "timeStamp,bestBid,bestAsk,bidSize,bidSize,askSize"
+    var sipString = "timeStamp,bestBid,bestAsk,bidSize,askSize\n"
     var bidBook: BidBook
     var askBook: AskBook
     var orderIndex: Int
@@ -91,6 +92,8 @@ class OrderBook {
     func addOrderToHistory(order: [String:Int]) {
         orderIndex += 1
         orderHistory[orderIndex] = order
+        let newLine = "\(order["ID"]!),\(order["orderID"]!),\(order["traderID"]!),\(order["timeStamp"]!),\(order["type"]!),\(order["quantity"]!),\(order["side"]!),\(order["price"]!)\n"
+        orderHistoryString.append(contentsOf: newLine)
     }
     
     func addOrderToLookUp(order: [String:Int]) {
@@ -328,21 +331,54 @@ class OrderBook {
         }
     }
     
-    func orderHistoryToCsv(filePath: String, data: String) {
-        do {
-            try data.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
-        } catch {
-            print("Failed to write order history to file.")
-            print("\(error)")
+    func orderHistoryToCsv(filePath: String) {
+        if generalFileManager.fileExists(atPath: filePath) {
+            // create file handler
+            let fh = FileHandle(forWritingAtPath: filePath)
+            // seek to end of file
+            fh?.seekToEndOfFile()
+            // convert orderHistoryString to Data type
+            let data = orderHistoryString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            // write to end of file
+            fh?.write(data!)
+            // close the file handler
+            fh?.closeFile()
+            orderHistoryString.removeAll()
         }
+        else {
+            do {
+                try orderHistoryString.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+                orderHistoryString.removeAll()
+            } catch {
+                print("Failed to write order history to file.")
+                print("\(error)")
+            }
+        }
+        
     }
     
-    func sipToCsv(filePath: String, data: String) {
-        do {
-            try data.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
-        } catch {
-            print("Failed to write sip to file.")
-            print("\(error)")
+    func sipToCsv(filePath: String) {
+        if generalFileManager.fileExists(atPath: filePath) {
+            // create file handler
+            let fh = FileHandle(forWritingAtPath: filePath)
+            // seek to end of file
+            fh?.seekToEndOfFile()
+            // convert sip string to Data type
+            let data = sipString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            // write to end of file
+            fh?.write(data!)
+            // close the file handler
+            fh?.closeFile()
+            sipString.removeAll()
+        }
+        else {
+            do {
+                try sipString.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+                sipString.removeAll()
+            } catch {
+                print("Failed to write sip to file.")
+                print("\(error)")
+            }
         }
     }
     
@@ -353,7 +389,7 @@ class OrderBook {
         let bestAskSize = askBook.priceSize[bestAskPrice]
         let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice, "bestAsk": bestAskPrice, "bidSize": bestBidSize, "askSize": bestAskSize]
         sipCollector.append(tob)
-        let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)"
+        let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)\n"
         sipString.append(contentsOf: sipData)
         return tob
     }

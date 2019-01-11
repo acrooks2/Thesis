@@ -58,3 +58,10 @@ func randExp(rate: Double) -> Double {
 for _ in 1...10 {
     print(randExp(rate: 0.0375))
 }
+
+let fm = FileManager()
+let fh = FileHandle(forWritingAtPath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/orders.csv")
+fh?.seekToEndOfFile()
+let data = Data("test".utf8)
+print(data)
+fh?.write(data)

@@ -2,5 +2,10 @@
 <Timeline
    version = "3.0">
    <TimelineItems>
+      <LoggerValueHistoryTimelineItem
+         documentLocation = "file:///Users/charlie/OneDrive%20-%20George%20Mason%20University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/quickTests.playground#CharacterRangeLen=229&amp;CharacterRangeLoc=1191&amp;EndingColumnNumber=0&amp;EndingLineNumber=67&amp;StartingColumnNumber=0&amp;StartingLineNumber=62&amp;Timestamp=568915081.373198"
+         selectedRepresentationIndex = "0"
+         shouldTrackSuperviewWidth = "NO">
+      </LoggerValueHistoryTimelineItem>
    </TimelineItems>
 </Timeline>
