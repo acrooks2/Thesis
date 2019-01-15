@@ -103,7 +103,7 @@ class Trader {
     func bulkCancel(timeStamp: Int) {
         cancelCollector.removeAll()
         for x in localBook.keys {
-            if Float.random(in: 0..<1) < cancelProb {
+            if Float.random(in: 0..<1) <= cancelProb {
                 cancelCollector.append(makeCancelOrder(existingOrder: localBook[x]!, time: timeStamp))
             }
         }
@@ -115,9 +115,9 @@ class Trader {
     func providerProcessSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) -> [String:Int?] {
         var price: Int
         var side: Int
-        let lambda = Double.random(in: 0..<500)
+        let lambda = Double.random(in: 0..<200)
         var order: [String:Int]
-        if Float.random(in: 0..<1) < buySellProb {
+        if Float.random(in: 0...1) <= buySellProb {
             side = 1
             price = choosePriceFromExp(side: side, insidePrice: topOfBook["bestAsk"]!, lambda: lambda)
         }
@@ -149,7 +149,7 @@ class Trader {
         var prices = Array<Int>()
         var side: Int
         // This creates a buy order (buySellProb = .5 is equal probability of buy or sell)
-        if Float.random(in: 0..<1) < buySellProb {
+        if Float.random(in: 0...1) <= buySellProb {
             let maxBidPrice = topOfBook["bestBid"]!
             let minBidPrice = maxBidPrice! - quoteRange
             for _ in 1 ... numQuotes {
@@ -175,7 +175,7 @@ class Trader {
     }
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
-        if Float.random(in: 0..<1) < buySellProb {
+        if Float.random(in: 0...1) <= buySellProb {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
             return order
         }

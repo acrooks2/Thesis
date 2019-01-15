@@ -119,7 +119,7 @@ class Runner {
         for time in 1...setupTime {
             providers.shuffle()
             for p in providers {
-                if Float.random(in: 0..<1) < 0.5 {
+                if Float.random(in: 0...1) <= 0.5 {
                     let order = p.providerProcessSignal(timeStamp: time, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                     exchange1.processOrder(order: order as! [String : Int])
                     topOfBook = exchange1.reportTopOfBook(nowTime: time)
@@ -146,17 +146,17 @@ class Runner {
         for currentTime in prime...runSteps {
             traders.shuffle()
             for t in traders {
-                
+                // Trader is provider
                 if t.traderType == 0 {
-                    if Float.random(in: 0..<1) < 0.05 {
+                    if Float.random(in: 0...1) <= 0.05 {
                         let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                         exchange1.processOrder(order: order as! [String : Int])
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
                     }
                 }
-                
+                // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0..<1) < 0.025 {
+                    if Float.random(in: 0...1) <= 0.025 {
                         let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
                         for order in orders {
                             exchange1.processOrder(order: order as! [String : Int])
@@ -169,8 +169,9 @@ class Runner {
                         topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
                     }
                 }
+                // Trader is market taker
                 if t.traderType == 2 {
-                    if Float.random(in: 0..<1) < 0.025 {
+                    if Float.random(in: 0...1) <= 0.035 {
                         let order = t.mtProcessSignal(timeStamp: currentTime)
                         exchange1.processOrder(order: order)
                         if exchange1.traded {
