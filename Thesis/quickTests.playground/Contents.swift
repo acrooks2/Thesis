@@ -39,6 +39,30 @@ let list2Sum = list2.reduce(0, +)
 let list2Count = list2.count
 let list2Mean = list2Sum / list2Count
 
+var rFloatList: [Float] = []
+
+for _ in 1...100 {
+    rFloatList.append(Float.random(in: 0...1))
+}
+
+var averages: [Float] = []
+
+for _ in 1...50 {
+    rFloatList.append(Float.random(in: 0...1))
+    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
+}
+
+var rng = SystemRandomNumberGenerator()
+
+for _ in 1...10000 {
+    rFloatList.append(Float.random(in: 0..<1, using: &rng))
+    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
+    
+}
+print(averages.reduce(0, +) / Float(averages.count))
+
+
+
 (3 % 3)
 
 -1.0 / 0.5 * log(0.5)

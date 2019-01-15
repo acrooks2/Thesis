@@ -28,6 +28,8 @@ class Trader {
     var buySellProb: Float
     var timeDelta: Int
     var lambda: Double
+    var rng: SystemRandomNumberGenerator
+    var testRandomNumbers: [Float]
     
     init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double) {
         self.traderID = trader
@@ -48,6 +50,8 @@ class Trader {
         self.buySellProb = buySellProb
         self.lambda = lambda
         self.timeDelta = 0
+        self.rng = SystemRandomNumberGenerator()
+        self.testRandomNumbers = []
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -59,7 +63,7 @@ class Trader {
     }
     
     func randExp(rate: Double) -> Double {
-        return -1.0 / rate * log(Double.random(in: 0...1))
+        return -1.0 / rate * log(Double.random(in: 0...1, using: &rng))
     }
     
     func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
@@ -117,7 +121,7 @@ class Trader {
         var side: Int
         let lambda = Double.random(in: 0..<200)
         var order: [String:Int]
-        if Float.random(in: 0...1) <= buySellProb {
+        if Float.random(in: 0...1, using: &rng) <= buySellProb {
             side = 1
             price = choosePriceFromExp(side: side, insidePrice: topOfBook["bestAsk"]!, lambda: lambda)
         }
@@ -149,7 +153,7 @@ class Trader {
         var prices = Array<Int>()
         var side: Int
         // This creates a buy order (buySellProb = .5 is equal probability of buy or sell)
-        if Float.random(in: 0...1) <= buySellProb {
+        if Float.random(in: 0...1, using: &rng) <= buySellProb {
             let maxBidPrice = topOfBook["bestBid"]!
             let minBidPrice = maxBidPrice! - quoteRange
             for _ in 1 ... numQuotes {
@@ -175,7 +179,7 @@ class Trader {
     }
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
-        if Float.random(in: 0...1) <= buySellProb {
+        if Float.random(in: 0...1, using: &rng) <= buySellProb {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
             return order
         }
