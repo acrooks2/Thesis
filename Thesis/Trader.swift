@@ -30,8 +30,10 @@ class Trader {
     var lambda: Double
     var rng: SystemRandomNumberGenerator
     var testRandomNumbers: [Float]
+    let percentOfWealth: Float
+    var wealth: Double
     
-    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, percentWealth: Float, initW: Double) {
         self.traderID = trader
         self.traderType = traderType
         self.localBook = [:]
@@ -52,6 +54,9 @@ class Trader {
         self.timeDelta = 0
         self.rng = SystemRandomNumberGenerator()
         self.testRandomNumbers = []
+        self.percentOfWealth = percentWealth
+        self.wealth = initW
+        
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -77,13 +82,14 @@ class Trader {
         return cancelOrder
     }
     
-    func cumulateCashFlow(timeStamp: Int) {
+    func cumulateCashFlow(timeStamp: Int, price: Double) {
         cashFlowTimeStamps.append(timeStamp)
         cashFlows.append(cashFlow)
         positions.append(position)
+        wealth = Double(cashFlows.last!) + (Double(positions.last!) * price)
     }
     
-    func confirmTradeLocal(confirmOrder: [String:Int]) {
+    func confirmTradeLocal(confirmOrder: [String:Int], price: Double) {
         // Update cashflow and position
         if confirmOrder["side"] == 1 {
             cashFlow -= confirmOrder["price"]! * confirmOrder["quantity"]!
@@ -101,7 +107,7 @@ class Trader {
         else {
             localBook[localOrder!["orderID"]!]!["quantity"]! -= confirmOrder["quantity"]!
         }
-        cumulateCashFlow(timeStamp: confirmOrder["timeStamp"]!)
+        cumulateCashFlow(timeStamp: confirmOrder["timeStamp"]!, price: price)
     }
     
     func bulkCancel(timeStamp: Int) {

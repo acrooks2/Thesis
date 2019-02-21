@@ -45,7 +45,7 @@ class Runner {
         let maxProviderID = 3000 + numProviders - 1
         var providerList: [Trader] = []
         for i in 3000...maxProviderID {
-            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             providerList.append(trader)
         }
@@ -59,7 +59,7 @@ class Runner {
         let maxMarketMakerID = 1000 + numMMs - 1
         var mmList: [Trader] = []
         for i in 1000...maxMarketMakerID {
-            let trader = Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            let trader = Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mmList.append(trader)
         }
@@ -73,7 +73,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -97,7 +97,7 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
         seedProvider.makeTimeDelta(lambda: seedProvider.lambda)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
@@ -137,9 +137,10 @@ class Runner {
     }
     
     func confirmTrades() {
+        // need to track exchange1 and exchange2 positions probably
         for c in exchange1.confirmTradeCollector {
             let contraSide = liquidityProviders[c["traderID"]!]
-            contraSide?.confirmTradeLocal(confirmOrder: c)
+            contraSide?.confirmTradeLocal(confirmOrder: c, price: exchange1.priceHistory.last!)
         }
     }
     
