@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Accelerate
 
 
 struct Trade {
@@ -71,6 +72,8 @@ class OrderBook {
     var tradeIndex: Int
     var lookUp: [Int:[Int:[String:Int]]]
     var sipCollector: [[String:Int?]]
+    var priceHistory: [Double]
+    var volatility: Double
     
     init(bidbook: BidBook, askbook: AskBook, tradebook: TradeBook) {
         self.orderHistory = [:]
@@ -87,6 +90,8 @@ class OrderBook {
         self.tradeIndex = 0
         self.lookUp = [:]
         self.sipCollector = []
+        self.priceHistory = [0.0]
+        self.volatility = 0.0
     }
     
     func addOrderToHistory(order: [String:Int]) {
@@ -394,6 +399,15 @@ class OrderBook {
         sipCollector.append(tob)
         let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)\n"
         sipString.append(contentsOf: sipData)
+        let price: Double = (Double(bestBidPrice!) + Double(bestAskPrice)) / 2.0
+        priceHistory.append(price)
+        priceHistory.removeFirst()
+        var mn = 0.0
+        var sddev = 0.0
+        let workingPriceHistory = priceHistory
+        vDSP_normalizeD(workingPriceHistory, 1, nil, 1, &mn, &sddev, vDSP_Length(workingPriceHistory.count))
+        sddev *= sqrt(Double(workingPriceHistory.count) / Double(workingPriceHistory.count - 1))
+        volatility = sddev
         return tob
     }
 }

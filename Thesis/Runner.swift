@@ -126,6 +126,8 @@ class Runner {
                 }
             }
         }
+        let price = exchange1.priceHistory.last
+        exchange1.priceHistory = Array(repeating: price!, count: 1000)
     }
     
     func doCancels(trader: Trader) {
@@ -187,6 +189,7 @@ class Runner {
             }
         }
         print("This might have worked.")
+        print(market1.exchange1.volatility)
     }
     
     

@@ -54,13 +54,22 @@ for _ in 1...50 {
 
 var rng = SystemRandomNumberGenerator()
 
+var l: Array<Float?> = Array(repeating: 1.0, count: 1000)
+
+l.append(2.0)
+
+l.removeFirst()
+
+l.count
+
+/*
 for _ in 1...10000 {
     rFloatList.append(Float.random(in: 0..<1, using: &rng))
     averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
     
 }
 print(averages.reduce(0, +) / Float(averages.count))
-
+*/
 
 
 (3 % 3)
@@ -94,6 +103,4 @@ var dlist: [[String:Int]] = []
 let order = ["ID": 1, "quantity": 20]
 dlist.append(order)
 
-var f = false
 
-f == false
