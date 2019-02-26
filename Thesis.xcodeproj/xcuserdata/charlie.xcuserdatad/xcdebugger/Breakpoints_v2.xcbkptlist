@@ -165,8 +165,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "82"
             endingLineNumber = "82"
-            landmarkName = "makeCancelOrder(existingOrder:time:)"
-            landmarkType = "7">
+            landmarkName = "Trader"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -277,8 +277,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "123"
             endingLineNumber = "123"
-            landmarkName = "bulkCancel(timeStamp:)"
-            landmarkType = "7">
+            landmarkName = "Trader"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -293,7 +293,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "129"
             endingLineNumber = "129"
-            landmarkName = "providerProcessSignal(timeStamp:topOfBook:buySellProb:)"
+            landmarkName = "bulkCancel(timeStamp:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -325,7 +325,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "147"
             endingLineNumber = "147"
-            landmarkName = "choosePriceFromExp(side:insidePrice:lambda:)"
+            landmarkName = "providerProcessSignal(timeStamp:topOfBook:buySellProb:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -357,7 +357,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "114"
             endingLineNumber = "114"
-            landmarkName = "bulkCancel(timeStamp:)"
+            landmarkName = "confirmTradeLocal(confirmOrder:price:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
