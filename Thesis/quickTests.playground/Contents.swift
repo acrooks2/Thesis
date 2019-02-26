@@ -13,6 +13,14 @@ let views = (topLevelObjects as! Array<Any>).filter { $0 is NSView }
 PlaygroundPage.current.liveView = views[0] as! NSView
 
 
+Int(max(pow(Double(301), 0.6), 1))
+
+max(pow(Double(-100), 0.6), 1)
+
+max(Double(-100), 1)
+
+pow(Double(100), 0.6)
+
 Float.random(in: 0..<1)
 Float.random(in: 0..<1)
 Float.random(in: 0..<0.5)

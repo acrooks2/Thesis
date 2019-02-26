@@ -390,25 +390,26 @@ class OrderBook {
         }
     }
     
-    func reportTopOfBook(nowTime: Int) -> [String:Int?] {
+    func reportTopOfBook(nowTime: Int) -> (volatility: Double, tob: [String:Int?]) {
         let bestBidPrice = bidBook.prices.last
         let bestBidSize = bidBook.priceSize[bestBidPrice!]
         let bestAskPrice = askBook.prices[0]
         let bestAskSize = askBook.priceSize[bestAskPrice]
-        let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice, "bestAsk": bestAskPrice, "bidSize": bestBidSize, "askSize": bestAskSize]
-        sipCollector.append(tob)
-        let sipData = "\(tob["timeStamp"]!!),\(tob["bestBid"]!!),\(tob["bestAsk"]!!),\(tob["bidSize"]!!),\(tob["askSize"]!!)\n"
-        sipString.append(contentsOf: sipData)
         let price: Double = (Double(bestBidPrice!) + Double(bestAskPrice)) / 2.0
         priceHistory.append(price)
         priceHistory.removeFirst()
         var mn = 0.0
         var sddev = 0.0
-        let workingPriceHistory = priceHistory
+        let workingPriceHistory = Array(priceHistory.suffix(100))
         vDSP_normalizeD(workingPriceHistory, 1, nil, 1, &mn, &sddev, vDSP_Length(workingPriceHistory.count))
         sddev *= sqrt(Double(workingPriceHistory.count) / Double(workingPriceHistory.count - 1))
         volatility = sddev
-        return tob
+        let v = volatility
+        let tob = ["timeStamp": nowTime, "bestBid": bestBidPrice!, "bestAsk": bestAskPrice, "bidSize": bestBidSize!, "askSize": bestAskSize!]
+        sipCollector.append(tob)
+        let sipData = "\(tob["timeStamp"]!),\(tob["bestBid"]!),\(tob["bestAsk"]!),\(tob["bidSize"]!),\(tob["askSize"]!)\n"
+        sipString.append(contentsOf: sipData)
+        return (v, tob)
     }
 }
 
