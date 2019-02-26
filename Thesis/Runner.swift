@@ -45,7 +45,7 @@ class Runner {
         let maxProviderID = 3000 + numProviders - 1
         var providerList: [Trader] = []
         for i in 3000...maxProviderID {
-            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             providerList.append(trader)
         }
@@ -59,7 +59,7 @@ class Runner {
         let maxMarketMakerID = 1000 + numMMs - 1
         var mmList: [Trader] = []
         for i in 1000...maxMarketMakerID {
-            let trader = Trader(trader: i, traderType: 1, numQuotes: 60, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+            let trader = Trader(trader: i, traderType: 1, numQuotes: 20, quoteRange: 100, cancelProb: 0.95, maxQuantity: 25, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mmList.append(trader)
         }
@@ -73,7 +73,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 0, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 1, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -97,7 +97,7 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375)
+        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
         seedProvider.makeTimeDelta(lambda: seedProvider.lambda)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
@@ -115,17 +115,21 @@ class Runner {
     func setup() {
         traders = makeAll()
         seedOrderBook()
-        topOfBook = exchange1.reportTopOfBook(nowTime: 1)
+        let vAndT = exchange1.reportTopOfBook(nowTime: 1)
+        topOfBook = vAndT.tob
         for time in 1...setupTime {
             providers.shuffle()
             for p in providers {
                 if Float.random(in: 0...1) <= 0.5 {
                     let order = p.providerProcessSignal(timeStamp: time, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                     exchange1.processOrder(order: order as! [String : Int])
-                    topOfBook = exchange1.reportTopOfBook(nowTime: time)
+                    let vAndT = exchange1.reportTopOfBook(nowTime: time)
+                    topOfBook = vAndT.tob
                 }
             }
         }
+        let price = exchange1.priceHistory.last
+        exchange1.priceHistory = Array(repeating: price!, count: 1000)
     }
     
     func doCancels(trader: Trader) {
@@ -135,14 +139,22 @@ class Runner {
     }
     
     func confirmTrades() {
+        // need to track exchange1 and exchange2 positions probably
         for c in exchange1.confirmTradeCollector {
             let contraSide = liquidityProviders[c["traderID"]!]
-            contraSide?.confirmTradeLocal(confirmOrder: c)
+            contraSide?.confirmTradeLocal(confirmOrder: c, price: exchange1.priceHistory.last!)
+        }
+    }
+    
+    func wealthToCsv() {
+        for trader in marketMakers {
+            trader.addWealthToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/wealth.csv")
         }
     }
     
     func run(prime: Int, writeInterval: Int) {
-        topOfBook = exchange1.reportTopOfBook(nowTime: prime)
+        let vAndT = exchange1.reportTopOfBook(nowTime: prime)
+        topOfBook = vAndT.tob
         for currentTime in prime...runSteps {
             traders.shuffle()
             for t in traders {
@@ -151,22 +163,25 @@ class Runner {
                     if Float.random(in: 0...1) <= 0.05 {
                         let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                         exchange1.processOrder(order: order as! [String : Int])
-                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                        let vAndT = exchange1.reportTopOfBook(nowTime: currentTime)
+                        topOfBook = vAndT.tob
                     }
                 }
                 // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0...1) <= 0.025 {
+                    if Float.random(in: 0...1) <= 0.045 {
                         let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
                         for order in orders {
                             exchange1.processOrder(order: order as! [String : Int])
                         }
-                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                        let vAndT = exchange1.reportTopOfBook(nowTime: currentTime)
+                        topOfBook = vAndT.tob
                     }
                     t.bulkCancel(timeStamp: currentTime)
                     if t.cancelCollector.count > 0 {
                         doCancels(trader: t)
-                        topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                        let vAndT = exchange1.reportTopOfBook(nowTime: currentTime)
+                        topOfBook = vAndT.tob
                     }
                 }
                 // Trader is market taker
@@ -176,7 +191,8 @@ class Runner {
                         exchange1.processOrder(order: order)
                         if exchange1.traded {
                             confirmTrades()
-                            topOfBook = exchange1.reportTopOfBook(nowTime: currentTime)
+                            let vAndT = exchange1.reportTopOfBook(nowTime: currentTime)
+                            topOfBook = vAndT.tob
                         }
                     }
                 }
@@ -184,9 +200,11 @@ class Runner {
             if currentTime % writeInterval == 0 {
                 exchange1.orderHistoryToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/orders.csv")
                 exchange1.sipToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/sip.csv")
+                wealthToCsv()
             }
         }
         print("This might have worked.")
+        print(market1.exchange1.volatility)
     }
     
     

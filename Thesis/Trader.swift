@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import GameplayKit
+import Accelerate
 
 
 class Trader {
@@ -28,15 +30,23 @@ class Trader {
     var buySellProb: Float
     var timeDelta: Int
     var lambda: Double
+    var rng: SystemRandomNumberGenerator
+    var testRandomNumbers: [Float]
+    let percentOfWealth: Float
+    var wealth: Double
+    var dice: GKRandomDistribution
+    var wealthString: String
+    let generalFileManager = FileManager()
+    var maxWealth: Int
     
-    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, percentWealth: Float, initW: Double) {
         self.traderID = trader
         self.traderType = traderType
         self.localBook = [:]
         self.cancelCollector = []
         self.numQuotes = numQuotes
         self.quoteRange = quoteRange
-        self.position = 0
+        self.position = 1
         self.cashFlow = 0
         self.cashFlowTimeStamps = []
         self.cashFlows = []
@@ -48,6 +58,14 @@ class Trader {
         self.buySellProb = buySellProb
         self.lambda = lambda
         self.timeDelta = 0
+        self.rng = SystemRandomNumberGenerator()
+        self.testRandomNumbers = []
+        self.percentOfWealth = percentWealth
+        self.wealth = initW
+        self.maxWealth = Int(wealth * 0.12)
+        self.dice = GKRandomDistribution(lowestValue: 1, highestValue: 2)
+        self.wealthString = "TraderID,Wealth,TimeStamp\n"
+        
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -59,7 +77,7 @@ class Trader {
     }
     
     func randExp(rate: Double) -> Double {
-        return -1.0 / rate * log(Double.random(in: 0...1))
+        return -1.0 / rate * log(Double.random(in: 0...1, using: &rng))
     }
     
     func makeAddOrder(time: Int, side: Int, price: Int, quantity: Int) -> [String:Int] {
@@ -73,13 +91,16 @@ class Trader {
         return cancelOrder
     }
     
-    func cumulateCashFlow(timeStamp: Int) {
+    func cumulateCashFlow(timeStamp: Int, price: Double) {
         cashFlowTimeStamps.append(timeStamp)
         cashFlows.append(cashFlow)
         positions.append(position)
+        wealth = Double(cashFlow) + (Double(position) * price)
+        let newLine = "\(traderID),\(wealth),\(timeStamp)\n"
+        wealthString.append(contentsOf: newLine)
     }
     
-    func confirmTradeLocal(confirmOrder: [String:Int]) {
+    func confirmTradeLocal(confirmOrder: [String:Int], price: Double) {
         // Update cashflow and position
         if confirmOrder["side"] == 1 {
             cashFlow -= confirmOrder["price"]! * confirmOrder["quantity"]!
@@ -97,7 +118,7 @@ class Trader {
         else {
             localBook[localOrder!["orderID"]!]!["quantity"]! -= confirmOrder["quantity"]!
         }
-        cumulateCashFlow(timeStamp: confirmOrder["timeStamp"]!)
+        cumulateCashFlow(timeStamp: confirmOrder["timeStamp"]!, price: price)
     }
     
     func bulkCancel(timeStamp: Int) {
@@ -117,7 +138,7 @@ class Trader {
         var side: Int
         let lambda = Double.random(in: 0..<200)
         var order: [String:Int]
-        if Float.random(in: 0...1) <= buySellProb {
+        if dice.nextInt() == 1 {
             side = 1
             price = choosePriceFromExp(side: side, insidePrice: topOfBook["bestAsk"]!, lambda: lambda)
         }
@@ -148,8 +169,28 @@ class Trader {
         quoteCollector.removeAll()
         var prices = Array<Int>()
         var side: Int
+        //////////////////////////////////////////////
+        // Start of changes for this branch
+        var bidPrices = Array<Int>()
+        var askPrices = Array<Int>()
+        let spread = topOfBook["bestAsk"]!! - topOfBook["bestBid"]!!
+        let marketPrice = (topOfBook["bestAsk"]!! + topOfBook["bestBid"]!!) / 2
+        let maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 0.4), 5))
+        let minBidPrice = maxBidPrice - quoteRange
+        let minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 0.4), 5))
+        let maxAskPrice = minAskPrice + quoteRange
+
+        for _ in 1 ... numQuotes / 2 {
+            bidPrices.append(Int.random(in: minBidPrice...maxBidPrice))
+        }
+        for _ in 1 ... numQuotes / 2 {
+            askPrices.append(Int.random(in: minAskPrice...maxAskPrice))
+        }
+        // End of changes for this branch
+        ///////////////////////////////////////////////
+/*:
         // This creates a buy order (buySellProb = .5 is equal probability of buy or sell)
-        if Float.random(in: 0...1) <= buySellProb {
+        if dice.nextInt() == 1 {
             let maxBidPrice = topOfBook["bestBid"]!
             let minBidPrice = maxBidPrice! - quoteRange
             for _ in 1 ... numQuotes {
@@ -173,15 +214,54 @@ class Trader {
         }
         return quoteCollector
     }
+ */
+        for price in bidPrices {
+            let order = makeAddOrder(time: timeStamp, side: 1, price: price, quantity: Int.random(in: 1...maxQuantity))
+            localBook[order["orderID"]!] = order
+            quoteCollector.append(order)
+        }
+        
+        for price in askPrices {
+            let order = makeAddOrder(time: timeStamp, side: 2, price: price, quantity: Int.random(in: 1...maxQuantity))
+            localBook[order["orderID"]!] = order
+            quoteCollector.append(order)
+        }
+        return quoteCollector
+    }
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
-        if Float.random(in: 0...1) <= buySellProb {
+        if dice.nextInt() == 1 {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
             return order
         }
         else {
             let order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: Int.random(in: 1...maxQuantity))
             return order
+        }
+    }
+    
+    func addWealthToCsv(filePath: String) {
+        if generalFileManager.fileExists(atPath: filePath) {
+            // create file handler
+            let fh = FileHandle(forWritingAtPath: filePath)
+            // seek to end of file
+            fh?.seekToEndOfFile()
+            // convert sip string to Data type
+            let data = wealthString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            // write to end of file
+            fh?.write(data!)
+            // close the file handler
+            fh?.closeFile()
+            wealthString.removeAll()
+        }
+        else {
+            do {
+                try wealthString.write(toFile: filePath, atomically: true, encoding: String.Encoding.utf8)
+                wealthString.removeAll()
+            } catch {
+                print("Failed to write sip to file.")
+                print("\(error)")
+            }
         }
     }
 }

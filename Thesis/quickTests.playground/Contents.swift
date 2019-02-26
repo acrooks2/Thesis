@@ -13,6 +13,14 @@ let views = (topLevelObjects as! Array<Any>).filter { $0 is NSView }
 PlaygroundPage.current.liveView = views[0] as! NSView
 
 
+Int(max(pow(Double(301), 0.6), 1))
+
+max(pow(Double(-100), 0.6), 1)
+
+max(Double(-100), 1)
+
+pow(Double(100), 0.6)
+
 Float.random(in: 0..<1)
 Float.random(in: 0..<1)
 Float.random(in: 0..<0.5)
@@ -38,6 +46,39 @@ for _ in 1...50 {
 let list2Sum = list2.reduce(0, +)
 let list2Count = list2.count
 let list2Mean = list2Sum / list2Count
+
+var rFloatList: [Float] = []
+
+for _ in 1...100 {
+    rFloatList.append(Float.random(in: 0...1))
+}
+
+var averages: [Float] = []
+
+for _ in 1...50 {
+    rFloatList.append(Float.random(in: 0...1))
+    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
+}
+
+var rng = SystemRandomNumberGenerator()
+
+var l: Array<Float?> = Array(repeating: 1.0, count: 1000)
+
+l.append(2.0)
+
+l.removeFirst()
+
+l.count
+
+/*
+for _ in 1...10000 {
+    rFloatList.append(Float.random(in: 0..<1, using: &rng))
+    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
+    
+}
+print(averages.reduce(0, +) / Float(averages.count))
+*/
+
 
 (3 % 3)
 
@@ -70,6 +111,4 @@ var dlist: [[String:Int]] = []
 let order = ["ID": 1, "quantity": 20]
 dlist.append(order)
 
-var f = false
 
-f == false
