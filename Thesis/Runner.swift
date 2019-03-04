@@ -45,7 +45,7 @@ class Runner {
         let maxProviderID = 3000 + numProviders - 1
         var providerList: [Trader] = []
         for i in 3000...maxProviderID {
-            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
+            let trader = Trader(trader: i, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             providerList.append(trader)
         }
@@ -59,7 +59,7 @@ class Runner {
         let maxMarketMakerID = 1000 + numMMs - 1
         var mmList: [Trader] = []
         for i in 1000...maxMarketMakerID {
-            let trader = Trader(trader: i, traderType: 1, numQuotes: 20, quoteRange: 100, cancelProb: 0.95, maxQuantity: 25, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
+            let trader = Trader(trader: i, traderType: 1, numQuotes: 12, quoteRange: 60, cancelProb: 0.025, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mmList.append(trader)
         }
@@ -73,7 +73,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 1, cancelProb: 0.5, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0175, percentWealth: 0.5, initW: 50000)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 1, cancelProb: 0.5, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0175, percentWealth: 0.5, initW: 50000)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -83,7 +83,6 @@ class Runner {
         return mtList
     }
     
-    // Using "Any" is not ideal, see if you can figure out another way to do it
     func makeAll() -> [Trader] {
         var traderList: [Trader] = []
         providers = buildProviders(numProviders: numProviders)
@@ -97,7 +96,7 @@ class Runner {
     }
     
     func seedOrderBook() {
-        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 50, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
+        let seedProvider = Trader(trader: 9999, traderType: 0, numQuotes: 1, quoteRange: 60, cancelProb: 0.025, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, percentWealth: 0.5, initW: 50000)
         seedProvider.makeTimeDelta(lambda: seedProvider.lambda)
         liquidityProviders[seedProvider.traderID] = seedProvider
         let bestAsk = Int.random(in: 1000005...1002000)
@@ -160,7 +159,7 @@ class Runner {
             for t in traders {
                 // Trader is provider
                 if t.traderType == 0 {
-                    if Float.random(in: 0...1) <= 0.05 {
+                    if Float.random(in: 0...1) <= 0.005 {
                         let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: topOfBook as! [String : Int], buySellProb: 0.5)
                         exchange1.processOrder(order: order as! [String : Int])
                         let vAndT = exchange1.reportTopOfBook(nowTime: currentTime)
@@ -169,7 +168,7 @@ class Runner {
                 }
                 // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0...1) <= 0.045 {
+                    if Float.random(in: 0...1) <= 0.05 {
                         let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: topOfBook, buySellProb: 0.5)
                         for order in orders {
                             exchange1.processOrder(order: order as! [String : Int])
@@ -186,7 +185,7 @@ class Runner {
                 }
                 // Trader is market taker
                 if t.traderType == 2 {
-                    if Float.random(in: 0...1) <= 0.035 {
+                    if Float.random(in: 0...1) <= 0.0035 {
                         let order = t.mtProcessSignal(timeStamp: currentTime)
                         exchange1.processOrder(order: order)
                         if exchange1.traded {
@@ -196,6 +195,7 @@ class Runner {
                         }
                     }
                 }
+                let _ = exchange1.tobTime(nowTime: currentTime)
             }
             if currentTime % writeInterval == 0 {
                 exchange1.orderHistoryToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/orders.csv")

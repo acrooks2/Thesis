@@ -13,10 +13,4 @@ let views = (topLevelObjects as! Array<Any>).filter { $0 is NSView }
 PlaygroundPage.current.liveView = views[0] as! NSView
 
 
-var a = [Double]()
-let offset = 0.1
-for i in 0...10 {
-    a.append(Double(i/10) + offset)
-}
-
-a
+Int.random(in: 1...2)

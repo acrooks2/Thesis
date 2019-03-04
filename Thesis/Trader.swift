@@ -38,6 +38,8 @@ class Trader {
     var wealthString: String
     let generalFileManager = FileManager()
     var maxWealth: Int
+    var takerQ: Int
+    var takerQDirection: Int
     
     init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, percentWealth: Float, initW: Double) {
         self.traderID = trader
@@ -65,7 +67,8 @@ class Trader {
         self.maxWealth = Int(wealth * 0.12)
         self.dice = GKRandomDistribution(lowestValue: 1, highestValue: 2)
         self.wealthString = "TraderID,Wealth,TimeStamp\n"
-        
+        self.takerQ = Int.random(in: 1...20)
+        self.takerQDirection = Int.random(in: 1...2)
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -169,15 +172,17 @@ class Trader {
         quoteCollector.removeAll()
         var prices = Array<Int>()
         var side: Int
+        /*:
+         */
         //////////////////////////////////////////////
         // Start of changes for this branch
         var bidPrices = Array<Int>()
         var askPrices = Array<Int>()
         let spread = topOfBook["bestAsk"]!! - topOfBook["bestBid"]!!
         let marketPrice = (topOfBook["bestAsk"]!! + topOfBook["bestBid"]!!) / 2
-        let maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 0.4), 5))
+        let maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 0.3), 1))
         let minBidPrice = maxBidPrice - quoteRange
-        let minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 0.4), 5))
+        let minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 0.3), 1))
         let maxAskPrice = minAskPrice + quoteRange
 
         for _ in 1 ... numQuotes / 2 {
@@ -186,9 +191,25 @@ class Trader {
         for _ in 1 ... numQuotes / 2 {
             askPrices.append(Int.random(in: minAskPrice...maxAskPrice))
         }
+        
+        for price in bidPrices {
+            let order = makeAddOrder(time: timeStamp, side: 1, price: price, quantity: maxQuantity)
+            localBook[order["orderID"]!] = order
+            quoteCollector.append(order)
+        }
+        
+        for price in askPrices {
+            let order = makeAddOrder(time: timeStamp, side: 2, price: price, quantity: maxQuantity)
+            localBook[order["orderID"]!] = order
+            quoteCollector.append(order)
+        }
+        return quoteCollector
+    }
         // End of changes for this branch
         ///////////////////////////////////////////////
+
 /*:
+
         // This creates a buy order (buySellProb = .5 is equal probability of buy or sell)
         if dice.nextInt() == 1 {
             let maxBidPrice = topOfBook["bestBid"]!
@@ -214,28 +235,25 @@ class Trader {
         }
         return quoteCollector
     }
+
  */
-        for price in bidPrices {
-            let order = makeAddOrder(time: timeStamp, side: 1, price: price, quantity: Int.random(in: 1...maxQuantity))
-            localBook[order["orderID"]!] = order
-            quoteCollector.append(order)
-        }
         
-        for price in askPrices {
-            let order = makeAddOrder(time: timeStamp, side: 2, price: price, quantity: Int.random(in: 1...maxQuantity))
-            localBook[order["orderID"]!] = order
-            quoteCollector.append(order)
-        }
-        return quoteCollector
-    }
     
     func mtProcessSignal(timeStamp: Int) -> [String:Int] {
-        if dice.nextInt() == 1 {
+        
+        if self.takerQ == 0 {
+            self.takerQDirection = Int.random(in: 1...2)
+            self.takerQ = Int.random(in: 1...20)
+        }
+        
+        if self.takerQDirection == 1 {
             let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
+            self.takerQ -= 1
             return order
         }
         else {
             let order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: Int.random(in: 1...maxQuantity))
+            self.takerQ -= 1
             return order
         }
     }
