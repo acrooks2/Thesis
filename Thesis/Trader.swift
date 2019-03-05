@@ -255,7 +255,7 @@ class Trader {
             // Where is the best ask price (exchange1 or exchange2?)
             if ex1Tob["bestAsk"]!! < ex2Tob["bestAsk"]!! {
                 exch = 1
-                order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
+                order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: 1)
                 self.takerQ -= 1
                 //return (order, exch)
             }
@@ -275,7 +275,7 @@ class Trader {
         else {
             if ex1Tob["bestBid"]!! > ex2Tob["bestBid"]!! {
                 exch = 1
-                order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: Int.random(in: 1...maxQuantity))
+                order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: 1)
                 self.takerQ -= 1
                 //return (order, exch)
             }

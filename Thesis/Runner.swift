@@ -187,6 +187,12 @@ class Runner {
             let contraSide = liquidityProviders[c["traderID"]!]
             contraSide?.confirmTradeLocal(confirmOrder: c, price: exchange1.priceHistory.last!)
         }
+        for c in exchange2.confirmTradeCollector {
+            let contraSide = liquidityProviders[c["traderID"]!]
+            contraSide?.confirmTradeLocal(confirmOrder: c, price: exchange2.priceHistory.last!)
+        }
+        exchange1.confirmTradeCollector.removeAll()
+        exchange2.confirmTradeCollector.removeAll()
     }
     
     func wealthToCsv() {
@@ -223,7 +229,7 @@ class Runner {
                 }
                 // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0...1) <= 0.05 {
+                    if Float.random(in: 0...1) <= 0.005 {
                         // Which exchange is the mm going to post to?
                         if t.makerExchange == 1 {
                             let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: ex1TopOfBook, buySellProb: 0.5)
@@ -291,6 +297,12 @@ class Runner {
         }
         print("This might have worked.")
         print(market1.exchange1.volatility)
+        print(market1.exchange2.volatility)
+        let date = Date()
+        let calendar = Calendar.current
+        let hour = calendar.component(.hour, from: date)
+        let minutes = calendar.component(.minute, from: date)
+        print(hour, minutes)
     }
     
     
