@@ -31,8 +31,8 @@ class Trader {
     var timeDelta: Int
     var lambda: Double
     var rng: SystemRandomNumberGenerator
-    var testRandomNumbers: [Float]
-    let percentOfWealth: Float
+    //var testRandomNumbers: [Float]
+    //let percentOfWealth: Float
     var wealth: Double
     var dice: GKRandomDistribution
     var wealthString: String
@@ -40,8 +40,9 @@ class Trader {
     var maxWealth: Int
     var takerQ: Int
     var takerQDirection: Int
+    let makerExchange: Int
     
-    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, percentWealth: Float, initW: Double) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, exchange: Int) {
         self.traderID = trader
         self.traderType = traderType
         self.localBook = [:]
@@ -61,14 +62,15 @@ class Trader {
         self.lambda = lambda
         self.timeDelta = 0
         self.rng = SystemRandomNumberGenerator()
-        self.testRandomNumbers = []
-        self.percentOfWealth = percentWealth
-        self.wealth = initW
+        //self.testRandomNumbers = []
+        //self.percentOfWealth = percentWealth
+        self.wealth = 5000000
         self.maxWealth = Int(wealth * 0.12)
         self.dice = GKRandomDistribution(lowestValue: 1, highestValue: 2)
         self.wealthString = "TraderID,Wealth,TimeStamp\n"
         self.takerQ = Int.random(in: 1...20)
         self.takerQDirection = Int.random(in: 1...2)
+        self.makerExchange = exchange
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -239,7 +241,10 @@ class Trader {
  */
         
     
-    func mtProcessSignal(timeStamp: Int) -> [String:Int] {
+    func mtProcessSignal(timeStamp: Int, ex1Tob: [String:Int?], ex2Tob: [String:Int?]) -> (order: [String : Int], exchange: Int) {
+        
+        var order: [String : Int] = [:]
+        var exch: Int = 0
         
         if self.takerQ == 0 {
             self.takerQDirection = Int.random(in: 1...2)
@@ -247,15 +252,47 @@ class Trader {
         }
         
         if self.takerQDirection == 1 {
-            let order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
-            self.takerQ -= 1
-            return order
+            // Where is the best ask price (exchange1 or exchange2?)
+            if ex1Tob["bestAsk"]!! < ex2Tob["bestAsk"]!! {
+                exch = 1
+                order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: Int.random(in: 1...maxQuantity))
+                self.takerQ -= 1
+                //return (order, exch)
+            }
+            if ex2Tob["bestAsk"]!! < ex1Tob["bestAsk"]!! {
+                exch = 2
+                order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: 1)
+                self.takerQ -= 1
+                //return (order, exch)
+            }
+            if ex2Tob["bestAsk"]!! == ex1Tob["bestAsk"]!! {
+                exch = dice.nextInt()
+                order = makeAddOrder(time: timeStamp, side: 1, price: 2000000, quantity: 1)
+                self.takerQ -= 1
+                //return (order, exch)
+            }
         }
         else {
-            let order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: Int.random(in: 1...maxQuantity))
-            self.takerQ -= 1
-            return order
+            if ex1Tob["bestBid"]!! > ex2Tob["bestBid"]!! {
+                exch = 1
+                order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: Int.random(in: 1...maxQuantity))
+                self.takerQ -= 1
+                //return (order, exch)
+            }
+            if ex2Tob["bestBid"]!! > ex1Tob["bestBid"]!! {
+                exch = 2
+                order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: 1)
+                self.takerQ -= 1
+                //return (order, exch)
+            }
+            if ex2Tob["bestBid"]!! == ex1Tob["bestBid"]!! {
+                exch = dice.nextInt()
+                order = makeAddOrder(time: timeStamp, side: 2, price: 0, quantity: 1)
+                self.takerQ -= 1
+                //return (order, exch)
+            }
         }
+        return (order, exch)
     }
     
     func addWealthToCsv(filePath: String) {
