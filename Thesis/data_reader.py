@@ -29,11 +29,18 @@ returns2 = sip2.returns[lower_bound : upper_bound]
 # Plotting data
 fig1 = plt.figure(1)
 fig1.size = (15, 10)
-f1ax1 = fig1.add_subplot(121)
+f1ax1 = fig1.add_subplot(221)
 f1ax1.plot(price_hist)
 
-f1ax2 = fig1.add_subplot(122)
-f1ax2.plot(price_hist2)
+f1ax2 = fig1.add_subplot(222)
+f1ax2.plot(returns)
+
+f1ax3 = fig1.add_subplot(223)
+f1ax3.plot(price_hist2)
+
+f1ax4 = fig1.add_subplot(224)
+f1ax4.plot(returns2)
+
 # Line Plots
 price_hist.plot()
 returns.plot()
