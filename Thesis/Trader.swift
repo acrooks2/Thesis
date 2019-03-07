@@ -41,8 +41,9 @@ class Trader {
     var takerQ: Int
     var takerQDirection: Int
     let makerExchange: Int
+    let rebate: Int
     
-    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, exchange: Int) {
+    init(trader: Int, traderType: Int, numQuotes: Int, quoteRange: Int, cancelProb: Float, maxQuantity: Int, buySellProb: Float, lambda: Double, exchange: Int, rebate: Int) {
         self.traderID = trader
         self.traderType = traderType
         self.localBook = [:]
@@ -67,10 +68,11 @@ class Trader {
         self.wealth = 5000000
         self.maxWealth = Int(wealth * 0.12)
         self.dice = GKRandomDistribution(lowestValue: 1, highestValue: 2)
-        self.wealthString = "TraderID,Wealth,TimeStamp\n"
-        self.takerQ = Int.random(in: 1...20)
+        self.wealthString = "TraderID,Wealth,TimeStamp,Position\n"
+        self.takerQ = Int.random(in: 1...40)
         self.takerQDirection = Int.random(in: 1...2)
         self.makerExchange = exchange
+        self.rebate = rebate
     }
     
     func makeTimeDelta(lambda: Double) {
@@ -101,7 +103,7 @@ class Trader {
         cashFlows.append(cashFlow)
         positions.append(position)
         wealth = Double(cashFlow) + (Double(position) * price)
-        let newLine = "\(traderID),\(wealth),\(timeStamp)\n"
+        let newLine = "\(traderID),\(wealth),\(timeStamp),\(position)\n"
         wealthString.append(contentsOf: newLine)
     }
     
@@ -141,7 +143,7 @@ class Trader {
     func providerProcessSignal(timeStamp: Int, topOfBook: [String:Int], buySellProb: Float) -> [String:Int?] {
         var price: Int
         var side: Int
-        let lambda = Double.random(in: 0..<200)
+        let lambda = self.lambda//Double.random(in: 0..<200)
         var order: [String:Int]
         if dice.nextInt() == 1 {
             side = 1
@@ -180,18 +182,32 @@ class Trader {
         // Start of changes for this branch
         var bidPrices = Array<Int>()
         var askPrices = Array<Int>()
-        let spread = topOfBook["bestAsk"]!! - topOfBook["bestBid"]!!
-        let marketPrice = (topOfBook["bestAsk"]!! + topOfBook["bestBid"]!!) / 2
-        let maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 0.3), 1))
-        let minBidPrice = maxBidPrice - quoteRange
-        let minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 0.3), 1))
-        let maxAskPrice = minAskPrice + quoteRange
+        let spread = Float(topOfBook["bestAsk"]!! - topOfBook["bestBid"]!!)
+        let marketPrice = (Float(topOfBook["bestAsk"]!!) + Float(topOfBook["bestBid"]!!)) / 2.0
+        //var maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 3), 1)) + rebate
+        var maxBidPrice = marketPrice - (spread / 2) + Float(rebate)
+        var minBidPrice = maxBidPrice - Float(quoteRange)
+        //var minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 3), 1)) - rebate
+        var minAskPrice = marketPrice - (spread / 2) - Float(rebate)
+        var maxAskPrice = minAskPrice + Float(quoteRange)
+        
+        if minAskPrice <= maxBidPrice {
+            minAskPrice = marketPrice + 2
+            maxAskPrice = minAskPrice + Float(quoteRange)
+            maxBidPrice = marketPrice - 2
+            minBidPrice = maxBidPrice - Float(quoteRange)
+        }
+        
+        let newMaxBidPrice = Int(maxBidPrice.rounded(.down))
+        let newMinBidPrice = Int(minBidPrice.rounded(.down))
+        let newMaxAskPrice = Int(maxAskPrice.rounded(.up))
+        let newMinAskPrice = Int(minAskPrice.rounded(.up))
 
         for _ in 1 ... numQuotes / 2 {
-            bidPrices.append(Int.random(in: minBidPrice...maxBidPrice))
+            bidPrices.append(Int.random(in: newMinBidPrice...newMaxBidPrice))
         }
         for _ in 1 ... numQuotes / 2 {
-            askPrices.append(Int.random(in: minAskPrice...maxAskPrice))
+            askPrices.append(Int.random(in: newMinAskPrice...newMaxAskPrice))
         }
         
         for price in bidPrices {
