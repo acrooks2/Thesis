@@ -28,7 +28,9 @@ def remove_files(files):
 sip = pd.read_csv("sip.csv")
 sip2 = pd.read_csv("sip2.csv")
 sip["price"] = (sip.bestBid + sip.bestAsk) / 2
-sip2["price"] = (sip.bestBid + sip.bestAsk) / 2
+sip["spread"] = sip.bestAsk - sip.bestBid
+sip2["price"] = (sip2.bestBid + sip2.bestAsk) / 2
+sip2["spread"] = sip2.bestAsk - sip2.bestBid
 price_hist = sip.price[lower_bound : upper_bound]
 price_hist2 = sip2.price[lower_bound : upper_bound]
 sip["returns"] = np.log(sip.price).diff()
@@ -46,6 +48,7 @@ fig1 = plt.figure(1)
 fig1.size = (15, 10)
 f1ax1 = fig1.add_subplot(221)
 f1ax1.plot(price_hist)
+f1ax1.plot(price_hist2)
 
 f1ax2 = fig1.add_subplot(222)
 f1ax2.plot(returns)
@@ -67,8 +70,10 @@ pd.plotting.autocorrelation_plot(returns[0:2000])
 pd.plotting.autocorrelation_plot(abs(returns))
 
 # Histograms
-plt.hist(returns, log=True, bins=50)
+plt.hist(returns, log=True, bins=20)
 plt.hist(returns, bins=20)
+
+plt.hist(returns2, log=True)
 
 # Scatter Plots
 fig2 = plt.figure(2)

@@ -50,7 +50,7 @@ class Trader {
         self.cancelCollector = []
         self.numQuotes = numQuotes
         self.quoteRange = quoteRange
-        self.position = 1
+        self.position = 0
         self.cashFlow = 0
         self.cashFlowTimeStamps = []
         self.cashFlows = []
@@ -184,20 +184,32 @@ class Trader {
         var askPrices = Array<Int>()
         let spread = Float(topOfBook["bestAsk"]!! - topOfBook["bestBid"]!!)
         let marketPrice = (Float(topOfBook["bestAsk"]!!) + Float(topOfBook["bestBid"]!!)) / 2.0
+        let personalMarketPrice = marketPrice + Float((position / 10)) * 100
         //var maxBidPrice = Int(marketPrice) - Int(spread / 2) - Int(max(pow(Double(abs(position)), 3), 1)) + rebate
         var maxBidPrice = marketPrice - (spread / 2) + Float(rebate)
+        //maxBidPrice = personalMarketPrice + Float(rebate)
         var minBidPrice = maxBidPrice - Float(quoteRange)
         //var minAskPrice = Int(marketPrice) + Int(spread / 2) + Int(max(pow(Double(abs(position)), 3), 1)) - rebate
-        var minAskPrice = marketPrice - (spread / 2) - Float(rebate)
+        var minAskPrice = marketPrice + (spread / 2) - Float(rebate)
+        //minAskPrice = personalMarketPrice - Float(rebate)
         var maxAskPrice = minAskPrice + Float(quoteRange)
-        
+/*:
         if minAskPrice <= maxBidPrice {
             minAskPrice = marketPrice + 2
             maxAskPrice = minAskPrice + Float(quoteRange)
             maxBidPrice = marketPrice - 2
             minBidPrice = maxBidPrice - Float(quoteRange)
         }
-        
+ */
+        // Make sure that the bid and ask prices don't cross
+        if minAskPrice <= marketPrice {
+            minAskPrice = marketPrice + 2
+            maxAskPrice = minAskPrice + Float(quoteRange)
+        }
+        if maxBidPrice >= marketPrice {
+            maxBidPrice = marketPrice - 2
+            minBidPrice = maxBidPrice - Float(quoteRange)
+        }
         let newMaxBidPrice = Int(maxBidPrice.rounded(.down))
         let newMinBidPrice = Int(minBidPrice.rounded(.down))
         let newMaxAskPrice = Int(maxAskPrice.rounded(.up))
@@ -264,6 +276,7 @@ class Trader {
         
         if self.takerQ == 0 {
             self.takerQDirection = Int.random(in: 1...2)
+            //self.takerQ = Int(randExp(rate: 0.02))
             self.takerQ = Int.random(in: 1...20)
         }
         

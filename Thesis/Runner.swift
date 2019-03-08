@@ -67,11 +67,11 @@ class Runner {
         var mmList: [Trader] = []
         for i in stride(from: 1000, to: maxMarketMakerID, by: 2) {
             // Build a market maker for exchange1
-            let mm1 = Trader(trader: i, traderType: 1, numQuotes: 12, quoteRange: 60, cancelProb: 0.1, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 1, rebate: 0 )
+            let mm1 = Trader(trader: i, traderType: 1, numQuotes: 12, quoteRange: 12, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 1, rebate: 0 )
             mm1.makeTimeDelta(lambda: mm1.lambda)
             mmList.append(mm1)
             // Build a market maker for exchange2
-            let mm2 = Trader(trader: i + 1, traderType: 1, numQuotes: 12, quoteRange: 60, cancelProb: 0.1, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 2, rebate: 20)
+            let mm2 = Trader(trader: i + 1, traderType: 1, numQuotes: 12, quoteRange: 12, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 2, rebate: 3)
             mm2.makeTimeDelta(lambda: mm2.lambda)
             mmList.append(mm2)
         }
@@ -85,7 +85,7 @@ class Runner {
         let maxTakerID = 2000 + numMTs - 1
         var mtList: [Trader] = []
         for i in 2000...maxTakerID {
-            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 1, cancelProb: 0.5, maxQuantity: 1, buySellProb: 0.5, lambda: 0.01, exchange: 1, rebate: 0)
+            let trader = Trader(trader: i, traderType: 2, numQuotes: 1, quoteRange: 1, cancelProb: 0.5, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0075, exchange: 1, rebate: 0)
             trader.makeTimeDelta(lambda: trader.lambda)
             mtList.append(trader)
         }
@@ -213,7 +213,7 @@ class Runner {
             for t in traders {
                 // Trader is provider
                 if t.traderType == 0 {
-                    if Float.random(in: 0...1) <= 0.05 {
+                    if Float.random(in: 0...1) <= 0.0025 {
                         // Which exchange is the provider going to post to?
                         if t.makerExchange == 1 {
                             let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: ex1TopOfBook as! [String : Int], buySellProb: 0.5)
@@ -231,7 +231,7 @@ class Runner {
                 }
                 // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0...1) <= 0.99 {
+                    if Float.random(in: 0...0.95) <= 1 {
                         // Which exchange is the mm going to post to?
                         if t.makerExchange == 1 {
                             let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: ex1TopOfBook, buySellProb: 0.5)
@@ -265,8 +265,8 @@ class Runner {
                 }
                 // Trader is market taker
                 if t.traderType == 2 {
-                    //if Float.random(in: 0...1) <= 0.035 {
-                    if currentTime % t.timeDelta == 0 {
+                    if Float.random(in: 0...1) <= 0.01 { // was 0.00225
+                    //if currentTime % t.timeDelta == 0 {
                         let order = t.mtProcessSignal(timeStamp: currentTime, ex1Tob: ex1TopOfBook, ex2Tob: ex2TopOfBook)
                         if order.exchange == 1 {
                             exchange1.processOrder(order: order.order)

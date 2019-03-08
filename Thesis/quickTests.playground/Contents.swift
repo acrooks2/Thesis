@@ -70,14 +70,6 @@ l.removeFirst()
 
 l.count
 
-/*
-for _ in 1...10000 {
-    rFloatList.append(Float.random(in: 0..<1, using: &rng))
-    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
-    
-}
-print(averages.reduce(0, +) / Float(averages.count))
-*/
 
 
 (3 % 3)
@@ -96,8 +88,8 @@ func randExp(rate: Double) -> Double {
     return -1.0 / rate * log(Double.random(in: 0...1))
 }
 
-for _ in 1...10 {
-    print(randExp(rate: 0.0175))
+for _ in 1...50 {
+    print(randExp(rate: 0.02))
 }
 
 var x = ["key":1]
