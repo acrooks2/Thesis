@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/main.swift"
-            timestampString = "573686706.486869"
+            timestampString = "575317913.0581059"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -24,11 +24,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/main.swift"
-            timestampString = "573686706.486933"
+            timestampString = "575317913.058382"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -38,11 +38,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/main.swift"
-            timestampString = "573686706.486981"
+            timestampString = "575317913.058573"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/main.swift"
-            timestampString = "573686706.487022"
+            timestampString = "575317913.058749"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -66,11 +66,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/main.swift"
-            timestampString = "573686706.487062"
+            timestampString = "575317913.058916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58">
+            startingLineNumber = "59"
+            endingLineNumber = "59">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -80,7 +80,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5585459"
+            timestampString = "575316076.033772"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "103"
@@ -96,7 +96,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.558607"
+            timestampString = "575316076.033816"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "112"
@@ -112,7 +112,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5586489"
+            timestampString = "575316076.033854"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "182"
@@ -128,13 +128,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.558709"
+            timestampString = "574630918.9527791"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "89"
-            endingLineNumber = "89"
-            landmarkName = "makeAddOrder(time:side:price:quantity:)"
-            landmarkType = "7">
+            startingLineNumber = "97"
+            endingLineNumber = "97"
+            landmarkName = "Trader"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -144,7 +144,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5592279"
+            timestampString = "575316076.033908"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "301"
@@ -160,7 +160,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5592771"
+            timestampString = "575316076.033945"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "162"
@@ -176,7 +176,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.55932"
+            timestampString = "575316076.03398"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "166"
@@ -192,7 +192,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.559374"
+            timestampString = "575316076.0340151"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "329"
@@ -208,11 +208,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.559415"
+            timestampString = "574630918.953326"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
+            startingLineNumber = "129"
+            endingLineNumber = "129"
             landmarkName = "confirmTradeLocal(confirmOrder:price:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -224,7 +224,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5596679"
+            timestampString = "575316076.034062"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "225"
@@ -240,11 +240,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.559711"
+            timestampString = "574630918.953617"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "Trader"
+            landmarkType = "3">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Thesis/Trader.swift"
+            timestampString = "574630918.953905"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "bulkCancel(timeStamp:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -256,27 +272,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.5599459"
+            timestampString = "574630918.9541661"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
-            landmarkName = "bulkCancel(timeStamp:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.560219"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "162"
-            endingLineNumber = "162"
+            startingLineNumber = "184"
+            endingLineNumber = "184"
             landmarkName = "choosePriceFromExp(side:insidePrice:lambda:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -288,11 +288,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.560656"
+            timestampString = "574630918.9543999"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
             landmarkName = "providerProcessSignal(timeStamp:topOfBook:buySellProb:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -304,11 +304,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.561"
+            timestampString = "574630918.954625"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
+            startingLineNumber = "140"
+            endingLineNumber = "140"
             landmarkName = "confirmTradeLocal(confirmOrder:price:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -320,7 +320,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.561227"
+            timestampString = "575316076.034142"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "241"
@@ -336,7 +336,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.561272"
+            timestampString = "575316076.034179"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "275"
@@ -352,7 +352,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5613101"
+            timestampString = "575316076.034214"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "204"
@@ -368,7 +368,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.5613461"
+            timestampString = "575316076.0342489"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "342"
@@ -384,7 +384,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.561383"
+            timestampString = "575316076.034284"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "267"
@@ -400,7 +400,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/OrderBook.swift"
-            timestampString = "573763380.561419"
+            timestampString = "575316076.034323"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "232"
@@ -416,11 +416,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.5614541"
+            timestampString = "574630918.955063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "185"
-            endingLineNumber = "185"
+            startingLineNumber = "212"
+            endingLineNumber = "212"
             landmarkName = "mmProcessSignal(timeStamp:topOfBook:buySellProb:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -432,11 +432,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Runner.swift"
-            timestampString = "573763380.561702"
+            timestampString = "575315703.191407"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
             landmarkName = "buildProviders(numProviders:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -448,11 +448,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Runner.swift"
-            timestampString = "573763380.561777"
+            timestampString = "575315703.1917911"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "201"
-            endingLineNumber = "201"
+            startingLineNumber = "204"
+            endingLineNumber = "204"
             landmarkName = "wealthToCsv()"
             landmarkType = "7">
          </BreakpointContent>
@@ -464,11 +464,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.561848"
+            timestampString = "574630918.9553109"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
             landmarkName = "cumulateCashFlow(timeStamp:price:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -480,11 +480,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Thesis/Trader.swift"
-            timestampString = "573763380.562091"
+            timestampString = "574630918.955534"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "mmProcessSignal(timeStamp:topOfBook:buySellProb:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Thesis/Trader.swift"
+            timestampString = "574630918.955754"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "210"
+            endingLineNumber = "210"
             landmarkName = "mmProcessSignal(timeStamp:topOfBook:buySellProb:)"
             landmarkType = "7">
          </BreakpointContent>

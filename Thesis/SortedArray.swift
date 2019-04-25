@@ -1,4 +1,5 @@
 import Foundation // Needed for ComparisonResult (used privately)
+import Accelerate
 
 /// An array that keeps its elements sorted at all times.
 public struct SortedArray<Element> {

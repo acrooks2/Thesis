@@ -10,7 +10,7 @@ import Foundation
 import Accelerate
 
 
-struct Trade {
+struct Trade: Codable {
     var restingTraderID: Int
     var restingOrderID: Int
     var restingTimeStamp: Int

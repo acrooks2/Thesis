@@ -9,7 +9,11 @@
 /* Begin PBXBuildFile section */
 		CB01348521E18E8300A7D41B /* OrderBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348421E18E8300A7D41B /* OrderBook.swift */; };
 		CB01348E21E1C68400A7D41B /* SortedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB01348D21E1C68400A7D41B /* SortedArray.swift */; };
+		CB21C89E224AA77A00D41D72 /* Foundation.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CB9DB57E224AA067000CA0EE /* Foundation.framework */; };
+		CB21C89F224AA78100D41D72 /* Accelerate.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CB9DB57C224AA05E000CA0EE /* Accelerate.framework */; };
 		CB98E06121E58062000B6EEE /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB98E06021E58062000B6EEE /* main.swift */; };
+		CB9DB57D224AA05E000CA0EE /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB9DB57C224AA05E000CA0EE /* Accelerate.framework */; };
+		CB9DB57F224AA067000CA0EE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB9DB57E224AA067000CA0EE /* Foundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		CBE76E1421E5007000D9881A /* Trader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE76E1321E5007000D9881A /* Trader.swift */; };
 		CBE76E1621E53FF600D9881A /* Runner.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBE76E1521E53FF600D9881A /* Runner.swift */; };
 /* End PBXBuildFile section */
@@ -17,12 +21,14 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		CB01347F21E18E8300A7D41B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = usr/share/man/man1;
+			dstSubfolderSpec = 10;
 			files = (
+				CB21C89F224AA78100D41D72 /* Accelerate.framework in CopyFiles */,
+				CB21C89E224AA77A00D41D72 /* Foundation.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -31,6 +37,8 @@
 		CB01348421E18E8300A7D41B /* OrderBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderBook.swift; sourceTree = "<group>"; };
 		CB01348D21E1C68400A7D41B /* SortedArray.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortedArray.swift; sourceTree = "<group>"; };
 		CB98E06021E58062000B6EEE /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		CB9DB57C224AA05E000CA0EE /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		CB9DB57E224AA067000CA0EE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CBE76E1321E5007000D9881A /* Trader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trader.swift; sourceTree = "<group>"; };
 		CBE76E1521E53FF600D9881A /* Runner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Runner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -40,6 +48,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB9DB57F224AA067000CA0EE /* Foundation.framework in Frameworks */,
+				CB9DB57D224AA05E000CA0EE /* Accelerate.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,6 +61,7 @@
 			children = (
 				CB01348321E18E8300A7D41B /* Thesis */,
 				CB01348221E18E8300A7D41B /* Products */,
+				CB9DB57B224AA05E000CA0EE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,6 +83,15 @@
 				CBE76E1521E53FF600D9881A /* Runner.swift */,
 			);
 			path = Thesis;
+			sourceTree = "<group>";
+		};
+		CB9DB57B224AA05E000CA0EE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CB9DB57E224AA067000CA0EE /* Foundation.framework */,
+				CB9DB57C224AA05E000CA0EE /* Accelerate.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -260,7 +280,11 @@
 		CB01348921E18E8300A7D41B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj";
+				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "@executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 			};
@@ -269,7 +293,11 @@
 		CB01348A21E18E8300A7D41B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_STYLE = Automatic;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.nib *.lproj *.gch *.xcode* *.xcassets (*) .DS_Store CVS .svn .git .hg *.pbproj *.pbxproj";
+				"LD_RUNPATH_SEARCH_PATHS[arch=*]" = "@executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 			};

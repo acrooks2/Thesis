@@ -13,6 +13,10 @@ let views = (topLevelObjects as! Array<Any>).filter { $0 is NSView }
 PlaygroundPage.current.liveView = views[0] as! NSView
 
 
+let marketPrice = (Float(1000762) + Float(1000758)) / 2.0
+let pmp = marketPrice - Float(-30/10) * 10
+pmp
+
 Int(max(pow(Double(301), 0.6), 1))
 
 max(pow(Double(-100), 0.6), 1)

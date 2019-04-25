@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Accelerate
 
 class Runner {
     var exchange1: OrderBook
@@ -24,6 +25,7 @@ class Runner {
     var marketMakers: [Trader]
     var takers: [Trader]
     var traders: [Trader]
+    var trades: [Trade]
     
     init(exchange1: OrderBook, exchange2: OrderBook, runSteps: Int, numProviders: Int, numMMs: Int, numMTs: Int, setupTime: Int) {
         self.exchange1 = exchange1
@@ -41,6 +43,7 @@ class Runner {
         self.marketMakers = []
         self.takers = []
         self.traders = []
+        self.trades = []
     }
     
     func buildProviders(numProviders: Int) -> [Trader] {
@@ -67,11 +70,11 @@ class Runner {
         var mmList: [Trader] = []
         for i in stride(from: 1000, to: maxMarketMakerID, by: 2) {
             // Build a market maker for exchange1
-            let mm1 = Trader(trader: i, traderType: 1, numQuotes: 12, quoteRange: 12, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 1, rebate: 0 )
+            let mm1 = Trader(trader: i, traderType: 1, numQuotes: 12, quoteRange: 60, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 1, rebate: 0 )
             mm1.makeTimeDelta(lambda: mm1.lambda)
             mmList.append(mm1)
             // Build a market maker for exchange2
-            let mm2 = Trader(trader: i + 1, traderType: 1, numQuotes: 12, quoteRange: 12, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 2, rebate: 3)
+            let mm2 = Trader(trader: i + 1, traderType: 1, numQuotes: 12, quoteRange: 60, cancelProb: 0.15, maxQuantity: 1, buySellProb: 0.5, lambda: 0.0375, exchange: 2, rebate: 50)
             mm2.makeTimeDelta(lambda: mm2.lambda)
             mmList.append(mm2)
         }
@@ -213,7 +216,7 @@ class Runner {
             for t in traders {
                 // Trader is provider
                 if t.traderType == 0 {
-                    if Float.random(in: 0...1) <= 0.0025 {
+                    if Float.random(in: 0...1) <= 0.005 { // was 0.0025
                         // Which exchange is the provider going to post to?
                         if t.makerExchange == 1 {
                             let order = t.providerProcessSignal(timeStamp: currentTime, topOfBook: ex1TopOfBook as! [String : Int], buySellProb: 0.5)
@@ -231,7 +234,7 @@ class Runner {
                 }
                 // Trader is market maker
                 if t.traderType == 1 {
-                    if Float.random(in: 0...0.95) <= 1 {
+                    if Float.random(in: 0...1) <= 0.95 {
                         // Which exchange is the mm going to post to?
                         if t.makerExchange == 1 {
                             let orders = t.mmProcessSignal(timeStamp: currentTime, topOfBook: ex1TopOfBook, buySellProb: 0.5)
@@ -265,7 +268,7 @@ class Runner {
                 }
                 // Trader is market taker
                 if t.traderType == 2 {
-                    if Float.random(in: 0...1) <= 0.01 { // was 0.00225
+                    if Float.random(in: 0...1) <= 0.009 { // was 0.00225
                     //if currentTime % t.timeDelta == 0 {
                         let order = t.mtProcessSignal(timeStamp: currentTime, ex1Tob: ex1TopOfBook, ex2Tob: ex2TopOfBook)
                         if order.exchange == 1 {
@@ -293,6 +296,7 @@ class Runner {
             // If there are any weird data things in visualization consider this part of the code
             let _ = exchange2.tobTime(nowTime: currentTime)
             
+            
             if currentTime % writeInterval == 0 {
                 exchange1.orderHistoryToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/orders.csv")
                 exchange1.sipToCsv(filePath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/sip.csv")
@@ -301,6 +305,54 @@ class Runner {
                 wealthToCsv()
             }
         }
+        
+        let e1TradeBook = exchange1.tradeBook.trades
+        let e2TradesBook = exchange2.tradeBook.trades
+        
+        var e1Trades: [Trade]
+        var e2Trades: [Trade]
+        
+        e1Trades = []
+        e2Trades = []
+        
+        for (ID, trade) in e1TradeBook {
+            e1Trades.append(trade)
+        }
+        for (ID, trade) in e2TradesBook {
+            e2Trades.append(trade)
+        }
+/*:
+        do {
+            let e1TradesJson = try JSONEncoder().encode(e1Trades)
+            let e1JsonString = String(data: e1TradesJson, encoding: .utf8)!
+            let data = e1JsonString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            if let file = FileHandle(forWritingAtPath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/e1Trades.json") {
+                file.write(data!)
+            }
+        } catch {print("\(error)")}
+        
+        do {
+            let e2TradesJson = try JSONEncoder().encode(e2Trades)
+            let e2JsonString = String(data: e2TradesJson, encoding: .utf8)!
+            let data = e2JsonString.data(using: String.Encoding.utf8, allowLossyConversion: false)
+            if let file = FileHandle(forWritingAtPath: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/e2Trades.json") {
+                file.write(data!)
+            }
+        } catch {print("\(error)")}
+*/
+        do {
+            let e1TradesJson = try JSONEncoder().encode(e1Trades)
+            let e1JsonString = String(data: e1TradesJson, encoding: .utf8)!
+            try e1JsonString.write(toFile: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/e1Trades.json", atomically: true, encoding: String.Encoding.utf8)
+        } catch {print("\(error)")}
+        
+        
+        do {
+            let e2TradesJson = try JSONEncoder().encode(e2Trades)
+            let e2JsonString = String(data: e2TradesJson, encoding: .utf8)!
+            try e2JsonString.write(toFile: "/Users/charlie/OneDrive - George Mason University/CSS/Thesis/Code/maker_taker/Swift/Thesis/Thesis/e2Trades.json", atomically: true, encoding: String.Encoding.utf8)
+        } catch {print("\(error)")}
+        
         print("This might have worked.")
         print(market1.exchange1.volatility)
         print(market1.exchange2.volatility)
