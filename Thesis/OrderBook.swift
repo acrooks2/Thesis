@@ -10,7 +10,7 @@ import Foundation
 import Accelerate
 
 
-struct Trade {
+struct Trade: Codable {
     var restingTraderID: Int
     var restingOrderID: Int
     var restingTimeStamp: Int
@@ -427,7 +427,7 @@ class OrderBook {
         priceHistory.removeFirst()
         var mn = 0.0
         var sddev = 0.0
-        let workingPriceHistory = Array(priceHistory.suffix(100))
+        let workingPriceHistory = Array(priceHistory.suffix(1000))
         vDSP_normalizeD(workingPriceHistory, 1, nil, 1, &mn, &sddev, vDSP_Length(workingPriceHistory.count))
         sddev *= sqrt(Double(workingPriceHistory.count) / Double(workingPriceHistory.count - 1))
         volatility = sddev

@@ -13,6 +13,10 @@ let views = (topLevelObjects as! Array<Any>).filter { $0 is NSView }
 PlaygroundPage.current.liveView = views[0] as! NSView
 
 
+let marketPrice = (Float(1000762) + Float(1000758)) / 2.0
+let pmp = marketPrice - Float(-30/10) * 10
+pmp
+
 Int(max(pow(Double(301), 0.6), 1))
 
 max(pow(Double(-100), 0.6), 1)
@@ -70,14 +74,6 @@ l.removeFirst()
 
 l.count
 
-/*
-for _ in 1...10000 {
-    rFloatList.append(Float.random(in: 0..<1, using: &rng))
-    averages.append(rFloatList.reduce(0, +) / Float(rFloatList.count))
-    
-}
-print(averages.reduce(0, +) / Float(averages.count))
-*/
 
 
 (3 % 3)
@@ -96,8 +92,8 @@ func randExp(rate: Double) -> Double {
     return -1.0 / rate * log(Double.random(in: 0...1))
 }
 
-for _ in 1...10 {
-    print(randExp(rate: 0.0175))
+for _ in 1...50 {
+    print(randExp(rate: 0.02))
 }
 
 var x = ["key":1]
